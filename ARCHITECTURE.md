@@ -12,6 +12,35 @@ lifecycle.
 Ordinary psyche statements, intent observations, clarification questions, and
 subscriptions live in `signal-persona-spirit`.
 
+## MUST IMPLEMENT — signal architecture migration
+
+This contract is migrating to contract-local verbs per
+`primary/reports/designer/238-signal-architecture-redirection-contract-local-verbs.md`
+and `primary/reports/designer/239-signal-architecture-migration-plan.md`.
+
+Drop the `Mutate StartOrder` / `Mutate DrainAndStopOrder` /
+`Mutate ReloadBootstrapPolicyOrder` / `Mutate RegisterIdentity` /
+`Retract RetireIdentity` wrapping. Use contract-local owner verbs
+directly. Candidate verbs: `Start` (for `StartOrder`), `Drain` or
+`Stop` (for `DrainAndStopOrder` — likely two distinct verbs: `Drain`
+to initiate the drain, and the stop is implicit on drain completion;
+or `Stop` carries a drain mode on the payload), `Reload` (for
+`ReloadBootstrapPolicyOrder` — payload names what to reload),
+`Register` (for `RegisterIdentity` — payload is `Identity` or
+`Registration`), `Retire` (for `RetireIdentity` — payload names the
+identity). Drop the `*Order` suffix throughout — the crate's
+`owner-` prefix already establishes these are authoritative orders.
+Move verb-to-Sema lowering (`Start` → `Mutate` lifecycle state,
+`Drain` → `Mutate` drain state then `Retract` running state, etc.)
+into `persona-spirit`.
+
+References: `primary/reports/designer/238-signal-architecture-redirection-contract-local-verbs.md`,
+`primary/reports/designer/239-signal-architecture-migration-plan.md`.
+
+**Note to remover:** when the refactor lands, remove this section and
+add a `## Migration history — contract-local verbs (2026-05-XX)`
+paragraph noting the shape change.
+
 ## Contract Surface
 
 | Request | Signal verb | Meaning |
