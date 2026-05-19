@@ -1,11 +1,9 @@
 use nota_codec::{Decoder, Encoder, NotaDecode, NotaEncode};
 use owner_signal_persona_spirit::{
-    BootstrapPolicyReloaded, DrainAndStopOrder, Frame, FrameBody, OwnerSpiritOperationKind,
-    OwnerSpiritReply, OwnerSpiritRequest, OwnerSpiritRequestUnimplemented,
-    OwnerSpiritUnimplementedReason, PsycheIdentityName, PsycheIdentityRegistered,
-    PsycheIdentityRetired, RegisterPsycheIdentity, ReloadBootstrapPolicyOrder,
-    RetirePsycheIdentity, SpiritDrainedAndStopped, SpiritGeneration, SpiritStarted,
-    StartSpiritOrder,
+    BootstrapPolicyReloaded, DrainAndStopOrder, DrainedAndStopped, Frame, FrameBody, Generation,
+    IdentityName, IdentityRegistered, IdentityRetired, OperationKind, OwnerSpiritReply,
+    OwnerSpiritRequest, RegisterIdentity, ReloadBootstrapPolicyOrder, RequestUnimplemented,
+    RetireIdentity, StartOrder, Started, UnimplementedReason,
 };
 use signal_core::{
     ExchangeIdentifier, ExchangeLane, LaneSequence, NonEmpty, Reply, RequestPayload, SessionEpoch,
@@ -22,8 +20,8 @@ fn exchange() -> ExchangeIdentifier {
     )
 }
 
-fn psyche() -> PsycheIdentityName {
-    PsycheIdentityName::new("author")
+fn psyche() -> IdentityName {
+    IdentityName::new("author")
 }
 
 fn round_trip_request(request: OwnerSpiritRequest) -> OwnerSpiritRequest {
@@ -87,13 +85,13 @@ where
 #[test]
 fn owner_spirit_requests_round_trip() {
     let requests = [
-        OwnerSpiritRequest::StartSpiritOrder(StartSpiritOrder {
-            generation: SpiritGeneration::new(1),
+        OwnerSpiritRequest::StartOrder(StartOrder {
+            generation: Generation::new(1),
         }),
         OwnerSpiritRequest::DrainAndStopOrder(DrainAndStopOrder {}),
         OwnerSpiritRequest::ReloadBootstrapPolicyOrder(ReloadBootstrapPolicyOrder {}),
-        OwnerSpiritRequest::RegisterPsycheIdentity(RegisterPsycheIdentity { name: psyche() }),
-        OwnerSpiritRequest::RetirePsycheIdentity(RetirePsycheIdentity { name: psyche() }),
+        OwnerSpiritRequest::RegisterIdentity(RegisterIdentity { name: psyche() }),
+        OwnerSpiritRequest::RetireIdentity(RetireIdentity { name: psyche() }),
     ];
 
     for request in requests {
@@ -104,16 +102,16 @@ fn owner_spirit_requests_round_trip() {
 #[test]
 fn owner_spirit_replies_round_trip() {
     let replies = [
-        OwnerSpiritReply::SpiritStarted(SpiritStarted {
-            generation: SpiritGeneration::new(1),
+        OwnerSpiritReply::Started(Started {
+            generation: Generation::new(1),
         }),
-        OwnerSpiritReply::SpiritDrainedAndStopped(SpiritDrainedAndStopped {}),
+        OwnerSpiritReply::DrainedAndStopped(DrainedAndStopped {}),
         OwnerSpiritReply::BootstrapPolicyReloaded(BootstrapPolicyReloaded {}),
-        OwnerSpiritReply::PsycheIdentityRegistered(PsycheIdentityRegistered { name: psyche() }),
-        OwnerSpiritReply::PsycheIdentityRetired(PsycheIdentityRetired { name: psyche() }),
-        OwnerSpiritReply::OwnerSpiritRequestUnimplemented(OwnerSpiritRequestUnimplemented {
-            operation: OwnerSpiritOperationKind::StartSpiritOrder,
-            reason: OwnerSpiritUnimplementedReason::NotBuiltYet,
+        OwnerSpiritReply::IdentityRegistered(IdentityRegistered { name: psyche() }),
+        OwnerSpiritReply::IdentityRetired(IdentityRetired { name: psyche() }),
+        OwnerSpiritReply::RequestUnimplemented(RequestUnimplemented {
+            operation: OperationKind::StartOrder,
+            reason: UnimplementedReason::NotBuiltYet,
         }),
     ];
 
@@ -126,8 +124,8 @@ fn owner_spirit_replies_round_trip() {
 fn owner_spirit_request_variants_declare_expected_signal_root_verbs() {
     let cases = [
         (
-            OwnerSpiritRequest::StartSpiritOrder(StartSpiritOrder {
-                generation: SpiritGeneration::new(1),
+            OwnerSpiritRequest::StartOrder(StartOrder {
+                generation: Generation::new(1),
             }),
             SignalVerb::Mutate,
         ),
@@ -140,11 +138,11 @@ fn owner_spirit_request_variants_declare_expected_signal_root_verbs() {
             SignalVerb::Mutate,
         ),
         (
-            OwnerSpiritRequest::RegisterPsycheIdentity(RegisterPsycheIdentity { name: psyche() }),
+            OwnerSpiritRequest::RegisterIdentity(RegisterIdentity { name: psyche() }),
             SignalVerb::Mutate,
         ),
         (
-            OwnerSpiritRequest::RetirePsycheIdentity(RetirePsycheIdentity { name: psyche() }),
+            OwnerSpiritRequest::RetireIdentity(RetireIdentity { name: psyche() }),
             SignalVerb::Retract,
         ),
     ];
@@ -157,42 +155,41 @@ fn owner_spirit_request_variants_declare_expected_signal_root_verbs() {
 #[test]
 fn owner_spirit_request_exposes_contract_owned_operation_kind() {
     assert_eq!(
-        OwnerSpiritRequest::StartSpiritOrder(StartSpiritOrder {
-            generation: SpiritGeneration::new(1),
+        OwnerSpiritRequest::StartOrder(StartOrder {
+            generation: Generation::new(1),
         })
         .operation_kind(),
-        OwnerSpiritOperationKind::StartSpiritOrder
+        OperationKind::StartOrder
     );
     assert_eq!(
-        OwnerSpiritRequest::RetirePsycheIdentity(RetirePsycheIdentity { name: psyche() })
-            .operation_kind(),
-        OwnerSpiritOperationKind::RetirePsycheIdentity
+        OwnerSpiritRequest::RetireIdentity(RetireIdentity { name: psyche() }).operation_kind(),
+        OperationKind::RetireIdentity
     );
 }
 
 #[test]
 fn owner_spirit_canonical_examples_round_trip() {
     round_trip_nota(
-        OwnerSpiritRequest::StartSpiritOrder(StartSpiritOrder {
-            generation: SpiritGeneration::new(1),
+        OwnerSpiritRequest::StartOrder(StartOrder {
+            generation: Generation::new(1),
         }),
-        "(StartSpiritOrder (SpiritGeneration 1))",
+        "(StartOrder (Generation 1))",
     );
     round_trip_nota(
-        OwnerSpiritRequest::RegisterPsycheIdentity(RegisterPsycheIdentity { name: psyche() }),
-        "(RegisterPsycheIdentity author)",
+        OwnerSpiritRequest::RegisterIdentity(RegisterIdentity { name: psyche() }),
+        "(RegisterIdentity author)",
     );
     round_trip_nota(
-        OwnerSpiritReply::SpiritStarted(SpiritStarted {
-            generation: SpiritGeneration::new(1),
+        OwnerSpiritReply::Started(Started {
+            generation: Generation::new(1),
         }),
-        "(SpiritStarted (SpiritGeneration 1))",
+        "(Started (Generation 1))",
     );
     round_trip_nota(
-        OwnerSpiritReply::OwnerSpiritRequestUnimplemented(OwnerSpiritRequestUnimplemented {
-            operation: OwnerSpiritOperationKind::StartSpiritOrder,
-            reason: OwnerSpiritUnimplementedReason::NotBuiltYet,
+        OwnerSpiritReply::RequestUnimplemented(RequestUnimplemented {
+            operation: OperationKind::StartOrder,
+            reason: UnimplementedReason::NotBuiltYet,
         }),
-        "(OwnerSpiritRequestUnimplemented StartSpiritOrder NotBuiltYet)",
+        "(RequestUnimplemented StartOrder NotBuiltYet)",
     );
 }

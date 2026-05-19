@@ -16,11 +16,11 @@ subscriptions live in `signal-persona-spirit`.
 
 | Request | Signal verb | Meaning |
 |---|---|---|
-| `StartSpiritOrder` | `Mutate` | Bring the spirit daemon into active service. |
+| `StartOrder` | `Mutate` | Bring the spirit daemon into active service. |
 | `DrainAndStopOrder` | `Mutate` | Drain work and stop spirit cleanly. |
 | `ReloadBootstrapPolicyOrder` | `Mutate` | Reload bootstrap-policy content when allowed by runtime policy. |
-| `RegisterPsycheIdentity` | `Mutate` | Register a psyche identity marker. |
-| `RetirePsycheIdentity` | `Retract` | Retire a psyche identity marker. |
+| `RegisterIdentity` | `Mutate` | Register a psyche identity marker. |
+| `RetireIdentity` | `Retract` | Retire a psyche identity marker. |
 
 ## Constraints
 

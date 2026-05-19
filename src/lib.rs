@@ -10,11 +10,11 @@ use signal_core::signal_channel;
 #[derive(
     Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, Copy, PartialEq, Eq, Hash,
 )]
-pub struct SpiritGeneration {
+pub struct Generation {
     pub value: u64,
 }
 
-impl SpiritGeneration {
+impl Generation {
     pub const fn new(value: u64) -> Self {
         Self { value }
     }
@@ -23,9 +23,9 @@ impl SpiritGeneration {
 #[derive(
     Archive, RkyvSerialize, RkyvDeserialize, NotaTransparent, Debug, Clone, PartialEq, Eq, Hash,
 )]
-pub struct PsycheIdentityName(String);
+pub struct IdentityName(String);
 
-impl PsycheIdentityName {
+impl IdentityName {
     pub fn new(value: impl Into<String>) -> Self {
         Self(value.into())
     }
@@ -36,8 +36,8 @@ impl PsycheIdentityName {
 }
 
 #[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
-pub struct StartSpiritOrder {
-    pub generation: SpiritGeneration,
+pub struct StartOrder {
+    pub generation: Generation,
 }
 
 #[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
@@ -47,77 +47,77 @@ pub struct DrainAndStopOrder {}
 pub struct ReloadBootstrapPolicyOrder {}
 
 #[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
-pub struct RegisterPsycheIdentity {
-    pub name: PsycheIdentityName,
+pub struct RegisterIdentity {
+    pub name: IdentityName,
 }
 
 #[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
-pub struct RetirePsycheIdentity {
-    pub name: PsycheIdentityName,
+pub struct RetireIdentity {
+    pub name: IdentityName,
 }
 
 #[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
-pub struct SpiritStarted {
-    pub generation: SpiritGeneration,
+pub struct Started {
+    pub generation: Generation,
 }
 
 #[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
-pub struct SpiritDrainedAndStopped {}
+pub struct DrainedAndStopped {}
 
 #[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
 pub struct BootstrapPolicyReloaded {}
 
 #[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
-pub struct PsycheIdentityRegistered {
-    pub name: PsycheIdentityName,
+pub struct IdentityRegistered {
+    pub name: IdentityName,
 }
 
 #[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
-pub struct PsycheIdentityRetired {
-    pub name: PsycheIdentityName,
+pub struct IdentityRetired {
+    pub name: IdentityName,
 }
 
 #[derive(
     Archive, RkyvSerialize, RkyvDeserialize, NotaEnum, Debug, Clone, Copy, PartialEq, Eq, Hash,
 )]
-pub enum OwnerSpiritOperationKind {
-    StartSpiritOrder,
+pub enum OperationKind {
+    StartOrder,
     DrainAndStopOrder,
     ReloadBootstrapPolicyOrder,
-    RegisterPsycheIdentity,
-    RetirePsycheIdentity,
+    RegisterIdentity,
+    RetireIdentity,
 }
 
 #[derive(
     Archive, RkyvSerialize, RkyvDeserialize, NotaEnum, Debug, Clone, Copy, PartialEq, Eq, Hash,
 )]
-pub enum OwnerSpiritUnimplementedReason {
+pub enum UnimplementedReason {
     NotBuiltYet,
     DependencyNotReady,
 }
 
 #[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
-pub struct OwnerSpiritRequestUnimplemented {
-    pub operation: OwnerSpiritOperationKind,
-    pub reason: OwnerSpiritUnimplementedReason,
+pub struct RequestUnimplemented {
+    pub operation: OperationKind,
+    pub reason: UnimplementedReason,
 }
 
 signal_channel! {
     channel OwnerSpirit {
         request OwnerSpiritRequest {
-            Mutate StartSpiritOrder(StartSpiritOrder),
+            Mutate StartOrder(StartOrder),
             Mutate DrainAndStopOrder(DrainAndStopOrder),
             Mutate ReloadBootstrapPolicyOrder(ReloadBootstrapPolicyOrder),
-            Mutate RegisterPsycheIdentity(RegisterPsycheIdentity),
-            Retract RetirePsycheIdentity(RetirePsycheIdentity),
+            Mutate RegisterIdentity(RegisterIdentity),
+            Retract RetireIdentity(RetireIdentity),
         }
         reply OwnerSpiritReply {
-            SpiritStarted(SpiritStarted),
-            SpiritDrainedAndStopped(SpiritDrainedAndStopped),
+            Started(Started),
+            DrainedAndStopped(DrainedAndStopped),
             BootstrapPolicyReloaded(BootstrapPolicyReloaded),
-            PsycheIdentityRegistered(PsycheIdentityRegistered),
-            PsycheIdentityRetired(PsycheIdentityRetired),
-            OwnerSpiritRequestUnimplemented(OwnerSpiritRequestUnimplemented),
+            IdentityRegistered(IdentityRegistered),
+            IdentityRetired(IdentityRetired),
+            RequestUnimplemented(RequestUnimplemented),
         }
     }
 }
@@ -129,28 +129,26 @@ pub type ChannelReply = OwnerSpiritChannelReply;
 pub type RequestBuilder = OwnerSpiritRequestBuilder;
 
 impl OwnerSpiritRequest {
-    pub fn operation_kind(&self) -> OwnerSpiritOperationKind {
+    pub fn operation_kind(&self) -> OperationKind {
         match self {
-            Self::StartSpiritOrder(_) => OwnerSpiritOperationKind::StartSpiritOrder,
-            Self::DrainAndStopOrder(_) => OwnerSpiritOperationKind::DrainAndStopOrder,
-            Self::ReloadBootstrapPolicyOrder(_) => {
-                OwnerSpiritOperationKind::ReloadBootstrapPolicyOrder
-            }
-            Self::RegisterPsycheIdentity(_) => OwnerSpiritOperationKind::RegisterPsycheIdentity,
-            Self::RetirePsycheIdentity(_) => OwnerSpiritOperationKind::RetirePsycheIdentity,
+            Self::StartOrder(_) => OperationKind::StartOrder,
+            Self::DrainAndStopOrder(_) => OperationKind::DrainAndStopOrder,
+            Self::ReloadBootstrapPolicyOrder(_) => OperationKind::ReloadBootstrapPolicyOrder,
+            Self::RegisterIdentity(_) => OperationKind::RegisterIdentity,
+            Self::RetireIdentity(_) => OperationKind::RetireIdentity,
         }
     }
 }
 
-impl From<SpiritStarted> for OwnerSpiritReply {
-    fn from(payload: SpiritStarted) -> Self {
-        Self::SpiritStarted(payload)
+impl From<Started> for OwnerSpiritReply {
+    fn from(payload: Started) -> Self {
+        Self::Started(payload)
     }
 }
 
-impl From<SpiritDrainedAndStopped> for OwnerSpiritReply {
-    fn from(payload: SpiritDrainedAndStopped) -> Self {
-        Self::SpiritDrainedAndStopped(payload)
+impl From<DrainedAndStopped> for OwnerSpiritReply {
+    fn from(payload: DrainedAndStopped) -> Self {
+        Self::DrainedAndStopped(payload)
     }
 }
 
@@ -160,20 +158,20 @@ impl From<BootstrapPolicyReloaded> for OwnerSpiritReply {
     }
 }
 
-impl From<PsycheIdentityRegistered> for OwnerSpiritReply {
-    fn from(payload: PsycheIdentityRegistered) -> Self {
-        Self::PsycheIdentityRegistered(payload)
+impl From<IdentityRegistered> for OwnerSpiritReply {
+    fn from(payload: IdentityRegistered) -> Self {
+        Self::IdentityRegistered(payload)
     }
 }
 
-impl From<PsycheIdentityRetired> for OwnerSpiritReply {
-    fn from(payload: PsycheIdentityRetired) -> Self {
-        Self::PsycheIdentityRetired(payload)
+impl From<IdentityRetired> for OwnerSpiritReply {
+    fn from(payload: IdentityRetired) -> Self {
+        Self::IdentityRetired(payload)
     }
 }
 
-impl From<OwnerSpiritRequestUnimplemented> for OwnerSpiritReply {
-    fn from(payload: OwnerSpiritRequestUnimplemented) -> Self {
-        Self::OwnerSpiritRequestUnimplemented(payload)
+impl From<RequestUnimplemented> for OwnerSpiritReply {
+    fn from(payload: RequestUnimplemented) -> Self {
+        Self::RequestUnimplemented(payload)
     }
 }
