@@ -5,18 +5,29 @@
 
 use nota_codec::{NotaEnum, NotaRecord, NotaTransparent};
 use rkyv::{Archive, Deserialize as RkyvDeserialize, Serialize as RkyvSerialize};
-use signal_core::signal_channel;
+use signal_frame::signal_channel;
 
 #[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, Copy, PartialEq, Eq, Hash,
+    Archive,
+    RkyvSerialize,
+    RkyvDeserialize,
+    NotaTransparent,
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    Hash,
 )]
-pub struct Generation {
-    pub value: u64,
-}
+pub struct Generation(u64);
 
 impl Generation {
     pub const fn new(value: u64) -> Self {
-        Self { value }
+        Self(value)
+    }
+
+    pub const fn value(self) -> u64 {
+        self.0
     }
 }
 
@@ -36,23 +47,23 @@ impl IdentityName {
 }
 
 #[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
-pub struct StartOrder {
+pub struct Start {
     pub generation: Generation,
 }
 
 #[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
-pub struct DrainAndStopOrder {}
+pub struct Drain {}
 
 #[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
-pub struct ReloadBootstrapPolicyOrder {}
+pub struct BootstrapPolicy {}
 
 #[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
-pub struct RegisterIdentity {
+pub struct Registration {
     pub name: IdentityName,
 }
 
 #[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
-pub struct RetireIdentity {
+pub struct Retirement {
     pub name: IdentityName,
 }
 
@@ -81,11 +92,11 @@ pub struct IdentityRetired {
     Archive, RkyvSerialize, RkyvDeserialize, NotaEnum, Debug, Clone, Copy, PartialEq, Eq, Hash,
 )]
 pub enum OperationKind {
-    StartOrder,
-    DrainAndStopOrder,
-    ReloadBootstrapPolicyOrder,
-    RegisterIdentity,
-    RetireIdentity,
+    Start,
+    Drain,
+    Reload,
+    Register,
+    Retire,
 }
 
 #[derive(
@@ -104,13 +115,12 @@ pub struct RequestUnimplemented {
 
 signal_channel! {
     channel OwnerSpirit {
-        request OwnerSpiritRequest {
-            Mutate StartOrder(StartOrder),
-            Mutate DrainAndStopOrder(DrainAndStopOrder),
-            Mutate ReloadBootstrapPolicyOrder(ReloadBootstrapPolicyOrder),
-            Mutate RegisterIdentity(RegisterIdentity),
-            Retract RetireIdentity(RetireIdentity),
-        }
+        operation Start(Start),
+        operation Drain(Drain),
+        operation Reload(BootstrapPolicy),
+        operation Register(Registration),
+        operation Retire(Retirement),
+    }
         reply OwnerSpiritReply {
             Started(Started),
             DrainedAndStopped(DrainedAndStopped),
@@ -119,7 +129,6 @@ signal_channel! {
             IdentityRetired(IdentityRetired),
             RequestUnimplemented(RequestUnimplemented),
         }
-    }
 }
 
 pub type Frame = OwnerSpiritFrame;
@@ -127,15 +136,16 @@ pub type FrameBody = OwnerSpiritFrameBody;
 pub type ChannelRequest = OwnerSpiritChannelRequest;
 pub type ChannelReply = OwnerSpiritChannelReply;
 pub type RequestBuilder = OwnerSpiritRequestBuilder;
+pub type OwnerSpiritRequest = OwnerSpiritOperation;
 
 impl OwnerSpiritRequest {
-    pub fn operation_kind(&self) -> OperationKind {
+    pub const fn operation_kind(&self) -> OperationKind {
         match self {
-            Self::StartOrder(_) => OperationKind::StartOrder,
-            Self::DrainAndStopOrder(_) => OperationKind::DrainAndStopOrder,
-            Self::ReloadBootstrapPolicyOrder(_) => OperationKind::ReloadBootstrapPolicyOrder,
-            Self::RegisterIdentity(_) => OperationKind::RegisterIdentity,
-            Self::RetireIdentity(_) => OperationKind::RetireIdentity,
+            Self::Start(_) => OperationKind::Start,
+            Self::Drain(_) => OperationKind::Drain,
+            Self::Reload(_) => OperationKind::Reload,
+            Self::Register(_) => OperationKind::Register,
+            Self::Retire(_) => OperationKind::Retire,
         }
     }
 }

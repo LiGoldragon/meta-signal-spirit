@@ -12,77 +12,39 @@ lifecycle.
 Ordinary psyche statements, intent observations, clarification questions, and
 subscriptions live in `signal-persona-spirit`.
 
-## MUST IMPLEMENT — three-layer migration
+## Migration history — three-layer model
 
-This contract is migrating to the three-layer model affirmed
-2026-05-20 per
-`primary/reports/designer/246-v4-bundled-fix-deep-design-with-examples.md`
-and `primary/reports/designer/248-three-layer-changes-for-operators.md`.
+On 2026-05-20 this contract moved to the current three-layer model:
 
-**Layer 1 — Contract Operations on the wire (this crate).** Drop the
-`Mutate StartOrder` / `Mutate DrainAndStopOrder` /
+- wire operations are contract-local owner verbs;
+- component commands are internal to `persona-spirit`;
+- Sema labels are payloadless observation classifications projected by
+  runtime code, not wrappers around wire operations.
+
+The old `Mutate StartOrder` / `Mutate DrainAndStopOrder` /
 `Mutate ReloadBootstrapPolicyOrder` / `Mutate RegisterIdentity` /
-`Retract RetireIdentity` wrapping entirely. Use contract-local owner
-verbs directly. Candidate verbs:
+`Retract RetireIdentity` shape is retired. The crate now depends on
+`signal-frame` rather than `signal-core`.
 
-- `Start` (for `StartOrder`),
-- `Drain` or `Stop` (for `DrainAndStopOrder` — likely two distinct
-  verbs: `Drain` to initiate the drain, and the stop is implicit on
-  drain completion; or `Stop` carries a drain mode on the payload),
-- `Reload` (for `ReloadBootstrapPolicyOrder` — payload names what to
-  reload),
-- `Register` (for `RegisterIdentity` — payload is `Identity` or
-  `Registration`),
-- `Retire` (for `RetireIdentity` — payload names the identity).
+## Contract Surface
 
-Drop the `*Order` suffix throughout — the crate's `owner-` prefix
-already establishes these are authoritative orders.
+| Request | Meaning |
+|---|---|
+| `Start(Start)` | Bring the spirit daemon into active service. |
+| `Drain(Drain)` | Drain work and stop spirit cleanly. |
+| `Reload(BootstrapPolicy)` | Reload bootstrap-policy content when allowed by runtime policy. |
+| `Register(Registration)` | Register a psyche identity marker. |
+| `Retire(Retirement)` | Retire a psyche identity marker. |
 
-**Layer 2 — Component Commands.** Lowering from contract operation to
-Component Commands (`Start` → `MutateLifecycleRunning`,
-`Drain` → `MutateDrainMode` then `RetractRunning`, etc.) lives in the
-`persona-spirit` daemon, not in this contract.
-
-**Layer 3 — Sema classification.** Each Component Command projects to
-a payloadless Sema class label via `ToSemaOperation` for observation.
-The owner socket is mandatory `Tap`/`Untap`-free in the contract
-itself; introspect subscribes on the ordinary `signal-persona-spirit`
-surface for the standardized observability per psyche intent
-(observation isn't security-sensitive and isn't routed through the
-owner socket).
-
-**Frame layer.** The dependency on `signal-core` shifts to
-`signal-frame`.
-
-References:
-- `primary/reports/designer/246-v4-bundled-fix-deep-design-with-examples.md`
-- `primary/reports/designer/248-three-layer-changes-for-operators.md`
-- `primary/skills/component-triad.md` §"Verbs come in three layers"
-- `primary/skills/contract-repo.md` §"Public contracts use contract-local operation verbs"
-
-**Note to remover:** when the refactor lands, remove this section and
-add a `## Migration history — three-layer model (2026-05-XX)`
-paragraph noting the shape change.
-
-## Contract Surface (current shape — to be renamed per above)
-
-| Request | Projected Sema class | Meaning |
-|---|---|---|
-| `StartOrder` | `Mutate` | Bring the spirit daemon into active service. |
-| `DrainAndStopOrder` | `Mutate` | Drain work and stop spirit cleanly. |
-| `ReloadBootstrapPolicyOrder` | `Mutate` | Reload bootstrap-policy content when allowed by runtime policy. |
-| `RegisterIdentity` | `Mutate` | Register a psyche identity marker. |
-| `RetireIdentity` | `Retract` | Retire a psyche identity marker. |
-
-The wire form (post-migration) will carry contract-local verbs only;
-the Sema class label is the daemon-side projection.
+The wire form carries contract-local verbs only. Sema class labels are
+daemon-side projections.
 
 ## Constraints
 
 | Constraint | Witness |
 |---|---|
 | Lifecycle/configuration orders live only in the owner contract. | Ordinary `signal-persona-spirit::SpiritRequest` has no owner variants. |
-| Every owner request is a contract-local verb in verb form (after migration). | `round_trip.rs` asserts each variant's NOTA head. Sema classification is daemon-side projection only. |
+| Every owner request is a contract-local verb. | `round_trip.rs` asserts each variant's NOTA head. Sema classification is daemon-side projection only. |
 | Contract code contains no runtime. | Source contains no Kameo, Tokio, redb, sockets, or sema-engine code. |
 
 ## Code Map

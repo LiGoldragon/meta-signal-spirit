@@ -159,8 +159,7 @@ version = "0.1.0"
 dependencies = [
  "nota-codec",
  "rkyv",
- "signal-core",
- "signal-persona-spirit",
+ "signal-frame",
  "thiserror",
 ]
 
@@ -263,35 +262,24 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b39cdef0fa800fc44525c84ccb54a029961a8215f9619753635a9c0d2538d46d"
 
 [[package]]
-name = "signal-core"
+name = "signal-frame"
 version = "0.1.0"
-source = "git+https://github.com/LiGoldragon/signal-core.git#5762bba19a118cedc9fc7edcb1237f9a53d444aa"
+source = "git+https://github.com/LiGoldragon/signal-frame.git?branch=main#fb53a6be46196cc9f266dcdda0daea7fc7d17648"
 dependencies = [
  "nota-codec",
  "rkyv",
- "signal-core-macros",
+ "signal-frame-macros",
  "thiserror",
 ]
 
 [[package]]
-name = "signal-core-macros"
+name = "signal-frame-macros"
 version = "0.1.0"
-source = "git+https://github.com/LiGoldragon/signal-core.git#5762bba19a118cedc9fc7edcb1237f9a53d444aa"
+source = "git+https://github.com/LiGoldragon/signal-frame.git?branch=main#fb53a6be46196cc9f266dcdda0daea7fc7d17648"
 dependencies = [
  "proc-macro2",
  "quote",
  "syn",
-]
-
-[[package]]
-name = "signal-persona-spirit"
-version = "0.1.0"
-source = "git+https://github.com/LiGoldragon/signal-persona-spirit.git?branch=main#a25bceb2deb91bcd77fb5d4361edc9a269c36fd6"
-dependencies = [
- "nota-codec",
- "rkyv",
- "signal-core",
- "thiserror",
 ]
 
 [[package]]
