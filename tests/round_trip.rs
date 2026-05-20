@@ -1,13 +1,13 @@
 use nota_codec::{Decoder, Encoder, NotaDecode, NotaEncode};
 use owner_signal_persona_spirit::{
     BootstrapPolicy, BootstrapPolicyReloaded, Drain, DrainedAndStopped, Frame, FrameBody,
-    Generation, IdentityName, IdentityRegistered, IdentityRetired, OperationKind, OwnerSpiritReply,
+    Generation, IdentityName, IdentityRegistered, IdentityRetired, OwnerSpiritReply,
     OwnerSpiritRequest, Registration, RequestUnimplemented, Retirement, Start, Started,
     UnimplementedReason,
 };
 use signal_frame::{
     ExchangeIdentifier, ExchangeLane, LaneSequence, NonEmpty, Reply, RequestPayload, SessionEpoch,
-    SubReply,
+    SignalOperationHeads, SubReply,
 };
 
 const CANONICAL: &str = include_str!("../examples/canonical.nota");
@@ -114,7 +114,6 @@ fn owner_spirit_replies_round_trip() {
             name: IdentityName::new("author"),
         }),
         OwnerSpiritReply::RequestUnimplemented(RequestUnimplemented {
-            operation: OperationKind::Start,
             reason: UnimplementedReason::NotBuiltYet,
         }),
     ];
@@ -126,31 +125,10 @@ fn owner_spirit_replies_round_trip() {
 
 #[test]
 fn owner_spirit_request_variants_are_contract_local_verbs() {
-    let cases = [
-        (
-            OwnerSpiritRequest::Start(Start {
-                generation: Generation::new(1),
-            }),
-            OperationKind::Start,
-        ),
-        (OwnerSpiritRequest::Drain(Drain {}), OperationKind::Drain),
-        (
-            OwnerSpiritRequest::Reload(BootstrapPolicy {}),
-            OperationKind::Reload,
-        ),
-        (
-            OwnerSpiritRequest::Register(registration()),
-            OperationKind::Register,
-        ),
-        (
-            OwnerSpiritRequest::Retire(retirement()),
-            OperationKind::Retire,
-        ),
-    ];
-
-    for (request, operation) in cases {
-        assert_eq!(request.operation_kind(), operation);
-    }
+    assert_eq!(
+        OwnerSpiritRequest::HEADS,
+        &["Start", "Drain", "Reload", "Register", "Retire"]
+    );
 }
 
 #[test]
@@ -186,9 +164,8 @@ fn owner_spirit_canonical_examples_round_trip() {
     );
     round_trip_nota(
         OwnerSpiritReply::RequestUnimplemented(RequestUnimplemented {
-            operation: OperationKind::Start,
             reason: UnimplementedReason::NotBuiltYet,
         }),
-        "(RequestUnimplemented (Start NotBuiltYet))",
+        "(RequestUnimplemented (NotBuiltYet))",
     );
 }

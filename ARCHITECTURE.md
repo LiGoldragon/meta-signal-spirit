@@ -46,6 +46,7 @@ daemon-side projections.
 | Lifecycle/configuration orders live only in the owner contract. | Ordinary `signal-persona-spirit::SpiritRequest` has no owner variants. |
 | Every owner request is a contract-local verb. | `round_trip.rs` asserts each variant's NOTA head. Sema classification is daemon-side projection only. |
 | Contract code contains no runtime. | Source contains no Kameo, Tokio, redb, sockets, or sema-engine code. |
+| Unimplemented replies carry only the reason; the request/reply position already names the operation. | `owner_spirit_canonical_examples_round_trip` expects `(RequestUnimplemented (NotBuiltYet))`. |
 
 ## Code Map
 

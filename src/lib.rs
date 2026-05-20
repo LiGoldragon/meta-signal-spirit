@@ -91,17 +91,6 @@ pub struct IdentityRetired {
 #[derive(
     Archive, RkyvSerialize, RkyvDeserialize, NotaEnum, Debug, Clone, Copy, PartialEq, Eq, Hash,
 )]
-pub enum OperationKind {
-    Start,
-    Drain,
-    Reload,
-    Register,
-    Retire,
-}
-
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEnum, Debug, Clone, Copy, PartialEq, Eq, Hash,
-)]
 pub enum UnimplementedReason {
     NotBuiltYet,
     DependencyNotReady,
@@ -109,7 +98,6 @@ pub enum UnimplementedReason {
 
 #[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
 pub struct RequestUnimplemented {
-    pub operation: OperationKind,
     pub reason: UnimplementedReason,
 }
 
@@ -137,18 +125,6 @@ pub type ChannelRequest = OwnerSpiritChannelRequest;
 pub type ChannelReply = OwnerSpiritChannelReply;
 pub type RequestBuilder = OwnerSpiritRequestBuilder;
 pub type OwnerSpiritRequest = OwnerSpiritOperation;
-
-impl OwnerSpiritRequest {
-    pub const fn operation_kind(&self) -> OperationKind {
-        match self {
-            Self::Start(_) => OperationKind::Start,
-            Self::Drain(_) => OperationKind::Drain,
-            Self::Reload(_) => OperationKind::Reload,
-            Self::Register(_) => OperationKind::Register,
-            Self::Retire(_) => OperationKind::Retire,
-        }
-    }
-}
 
 impl From<Started> for OwnerSpiritReply {
     fn from(payload: Started) -> Self {
