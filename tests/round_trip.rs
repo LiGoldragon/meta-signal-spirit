@@ -1,4 +1,4 @@
-use nota_codec::{Decoder, Encoder, NotaDecode, NotaEncode};
+use nota_next::{NotaDecode, NotaEncode, NotaSource};
 use owner_signal_persona_spirit::{
     BootstrapPolicy, BootstrapPolicyReloaded, Drain, DrainedAndStopped, Frame, FrameBody,
     Generation, IdentityName, IdentityRegistered, IdentityRetired, Operation, Registration, Reply,
@@ -67,13 +67,12 @@ fn round_trip_nota<Value>(value: Value, expected: &str)
 where
     Value: NotaEncode + NotaDecode + PartialEq + std::fmt::Debug,
 {
-    let mut encoder = Encoder::new();
-    value.encode(&mut encoder).expect("encode nota text");
-    let encoded = encoder.into_string();
+    let encoded = value.to_nota();
     assert_eq!(encoded, expected);
 
-    let mut decoder = Decoder::new(&encoded);
-    let recovered = Value::decode(&mut decoder).expect("decode nota text");
+    let recovered = NotaSource::new(&encoded)
+        .parse::<Value>()
+        .expect("decode nota text");
     assert_eq!(recovered, value);
     assert!(
         CANONICAL.contains(expected),
@@ -155,8 +154,8 @@ fn owner_spirit_request_heads_have_no_universal_verb_wrapper() {
     );
     round_trip_nota(Operation::Drain(Drain {}), "(Drain ())");
     round_trip_nota(Operation::Reload(BootstrapPolicy {}), "(Reload ())");
-    round_trip_nota(Operation::Register(registration()), "(Register (author))");
-    round_trip_nota(Operation::Retire(retirement()), "(Retire (author))");
+    round_trip_nota(Operation::Register(registration()), "(Register ([author]))");
+    round_trip_nota(Operation::Retire(retirement()), "(Retire ([author]))");
 }
 
 #[test]
