@@ -1,5 +1,5 @@
 {
-  description = "owner-signal-persona-spirit - OwnerSignal contract for persona-spirit";
+  description = "meta-signal-spirit - MetaSignal contract for spirit";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
@@ -58,7 +58,7 @@
           });
         };
         devShells.default = pkgs.mkShell {
-          name = "owner-signal-persona-spirit";
+          name = "meta-signal-spirit";
           packages = [ pkgs.jujutsu pkgs.pkg-config toolchain ];
         };
       });

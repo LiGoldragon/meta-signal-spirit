@@ -1,25 +1,16 @@
-//! OwnerSignal contract for privileged `persona-spirit` lifecycle.
+//! MetaSignal contract for privileged `spirit` lifecycle.
 //!
-//! Ordinary psyche and intent vocabulary lives in `signal-persona-spirit`.
+//! Ordinary psyche and intent vocabulary lives in `signal-spirit`.
 //! This crate carries supervisor-issued lifecycle and policy orders only.
 
-use nota_next::{NotaDecode, NotaEncode};
 use rkyv::{Archive, Deserialize as RkyvDeserialize, Serialize as RkyvSerialize};
 use signal_frame::signal_channel;
 
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
-    Debug,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Hash,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(::nota_next::NotaEncode, ::nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Generation(u64);
 
 impl Generation {
@@ -32,18 +23,11 @@ impl Generation {
     }
 }
 
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
-    Debug,
-    Clone,
-    PartialEq,
-    Eq,
-    Hash,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(::nota_next::NotaEncode, ::nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq, Hash)]
 pub struct IdentityName(String);
 
 impl IdentityName {
@@ -56,95 +40,109 @@ impl IdentityName {
     }
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(::nota_next::NotaEncode, ::nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct Start {
     pub generation: Generation,
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(::nota_next::NotaEncode, ::nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct Drain {}
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(::nota_next::NotaEncode, ::nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct BootstrapPolicy {}
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(::nota_next::NotaEncode, ::nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct Registration {
     pub name: IdentityName,
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(::nota_next::NotaEncode, ::nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct Retirement {
     pub name: IdentityName,
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(::nota_next::NotaEncode, ::nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct Started {
     pub generation: Generation,
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(::nota_next::NotaEncode, ::nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct DrainedAndStopped {}
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(::nota_next::NotaEncode, ::nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct BootstrapPolicyReloaded {}
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(::nota_next::NotaEncode, ::nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct IdentityRegistered {
     pub name: IdentityName,
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(::nota_next::NotaEncode, ::nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct IdentityRetired {
     pub name: IdentityName,
 }
 
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
-    Debug,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Hash,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(::nota_next::NotaEncode, ::nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum UnimplementedReason {
     NotBuiltYet,
     DependencyNotReady,
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(::nota_next::NotaEncode, ::nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct RequestUnimplemented {
     pub reason: UnimplementedReason,
 }
 
 signal_channel! {
-    channel Owner {
+    channel Meta {
         operation Start(Start),
         operation Drain(Drain),
         operation Reload(BootstrapPolicy),

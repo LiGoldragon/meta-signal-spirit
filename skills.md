@@ -1,6 +1,6 @@
-# skills — owner-signal-persona-spirit
+# skills — meta-signal-spirit
 
-Read this before editing the owner-only spirit contract.
+Read this before editing the meta-policy spirit contract.
 
 ## Required Context
 
@@ -9,7 +9,7 @@ Read this before editing the owner-only spirit contract.
 - `~/primary/skills/architectural-truth-tests.md`
 - `~/primary/skills/nix-discipline.md`
 - this repo's `ARCHITECTURE.md`
-- `signal-persona-spirit/ARCHITECTURE.md`
+- `signal-spirit/ARCHITECTURE.md`
 
 ## Boundary
 
@@ -20,5 +20,5 @@ no actors, no sockets, no storage, and no classifier logic.
 
 - Supervisor lifecycle and policy orders live here, not in the ordinary spirit contract.
 - Every request variant declares a Signal root verb through `signal_channel!`.
-- Shared spirit nouns are imported from `signal-persona-spirit`; do not duplicate them.
-- Runtime interpretation stays in `persona-spirit`.
+- Shared spirit nouns are imported from `signal-spirit`; do not duplicate them.
+- Runtime interpretation stays in `spirit`.

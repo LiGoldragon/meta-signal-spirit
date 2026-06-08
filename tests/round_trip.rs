@@ -1,9 +1,11 @@
-use nota_next::{NotaDecode, NotaEncode, NotaSource};
-use owner_signal_persona_spirit::{
+#![cfg(feature = "nota-text")]
+
+use meta_signal_spirit::{
     BootstrapPolicy, BootstrapPolicyReloaded, Drain, DrainedAndStopped, Frame, FrameBody,
     Generation, IdentityName, IdentityRegistered, IdentityRetired, Operation, Registration, Reply,
     RequestUnimplemented, Retirement, Start, Started, UnimplementedReason,
 };
+use nota_next::{NotaDecode, NotaEncode, NotaSource};
 use signal_frame::{
     ExchangeIdentifier, ExchangeLane, LaneSequence, NonEmpty, Reply as FrameReply, RequestPayload,
     SessionEpoch, SignalOperationHeads, SubReply,
@@ -81,7 +83,7 @@ where
 }
 
 #[test]
-fn owner_spirit_requests_round_trip() {
+fn meta_spirit_requests_round_trip() {
     let requests = [
         Operation::Start(Start {
             generation: Generation::new(1),
@@ -98,7 +100,7 @@ fn owner_spirit_requests_round_trip() {
 }
 
 #[test]
-fn owner_spirit_replies_round_trip() {
+fn meta_spirit_replies_round_trip() {
     let replies = [
         Reply::Started(Started {
             generation: Generation::new(1),
@@ -122,7 +124,7 @@ fn owner_spirit_replies_round_trip() {
 }
 
 #[test]
-fn owner_spirit_reply_payloads_convert_through_macro_generated_from_impls() {
+fn meta_spirit_reply_payloads_convert_through_macro_generated_from_impls() {
     let reply: Reply = Started {
         generation: Generation::new(1),
     }
@@ -137,7 +139,7 @@ fn owner_spirit_reply_payloads_convert_through_macro_generated_from_impls() {
 }
 
 #[test]
-fn owner_spirit_request_variants_are_contract_local_verbs() {
+fn meta_spirit_request_variants_are_contract_local_verbs() {
     assert_eq!(
         Operation::HEADS,
         &["Start", "Drain", "Reload", "Register", "Retire"]
@@ -145,7 +147,7 @@ fn owner_spirit_request_variants_are_contract_local_verbs() {
 }
 
 #[test]
-fn owner_spirit_request_heads_have_no_universal_verb_wrapper() {
+fn meta_spirit_request_heads_have_no_universal_verb_wrapper() {
     round_trip_nota(
         Operation::Start(Start {
             generation: Generation::new(1),
@@ -159,7 +161,7 @@ fn owner_spirit_request_heads_have_no_universal_verb_wrapper() {
 }
 
 #[test]
-fn owner_spirit_canonical_examples_round_trip() {
+fn meta_spirit_canonical_examples_round_trip() {
     round_trip_nota(
         Reply::Started(Started {
             generation: Generation::new(1),
