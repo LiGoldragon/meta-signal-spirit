@@ -1,68 +1,32 @@
 #![cfg(feature = "nota-text")]
 
 use meta_signal_spirit::{
-    BootstrapPolicy, BootstrapPolicyReloaded, Drain, DrainedAndStopped, Frame, FrameBody,
-    Generation, IdentityName, IdentityRegistered, IdentityRetired, Operation, Registration, Reply,
-    RequestUnimplemented, Retirement, Start, Started, UnimplementedReason,
+    ArchiveDatabaseTarget, ConfigureReceipt, ConfigureRequest, ImportReceipt, ImportedRecords,
+    Input, Output,
 };
 use nota_next::{NotaDecode, NotaEncode, NotaSource};
-use signal_frame::{
-    ExchangeIdentifier, ExchangeLane, LaneSequence, NonEmpty, Reply as FrameReply, RequestPayload,
-    SessionEpoch, SignalOperationHeads, SubReply,
-};
+use signal_frame::SignalOperationHeads;
+use signal_spirit::schema::signal::{CommitSequence, DatabaseMarker, RecordCount, StateDigest};
 
 const CANONICAL: &str = include_str!("../examples/canonical.nota");
 
-fn exchange() -> ExchangeIdentifier {
-    ExchangeIdentifier::new(
-        SessionEpoch::new(1),
-        ExchangeLane::Connector,
-        LaneSequence::first(),
-    )
-}
-
-fn registration() -> Registration {
-    Registration {
-        name: IdentityName::new("author"),
+fn database_marker() -> DatabaseMarker {
+    DatabaseMarker {
+        commit_sequence: CommitSequence::new(1),
+        state_digest: StateDigest::new(2),
     }
 }
 
-fn retirement() -> Retirement {
-    Retirement {
-        name: IdentityName::new("author"),
-    }
+fn round_trip_input(input: Input) -> Input {
+    let frame = input.encode_signal_frame().expect("encode input");
+    let (_route, decoded) = Input::decode_signal_frame(&frame).expect("decode input");
+    decoded
 }
 
-fn round_trip_request(request: Operation) -> Operation {
-    let frame = Frame::new(FrameBody::Request {
-        exchange: exchange(),
-        request: request.clone().into_request(),
-    });
-    let bytes = frame.encode_length_prefixed().expect("encode");
-    let decoded = Frame::decode_length_prefixed(&bytes).expect("decode");
-    match decoded.into_body() {
-        FrameBody::Request { request, .. } => request.payloads().head().clone(),
-        other => panic!("expected request operation, got {other:?}"),
-    }
-}
-
-fn round_trip_reply(reply: Reply) -> Reply {
-    let frame = Frame::new(FrameBody::Reply {
-        exchange: exchange(),
-        reply: FrameReply::committed(NonEmpty::single(SubReply::Ok(reply))),
-    });
-    let bytes = frame.encode_length_prefixed().expect("encode");
-    let decoded = Frame::decode_length_prefixed(&bytes).expect("decode");
-    match decoded.into_body() {
-        FrameBody::Reply { reply, .. } => match reply {
-            FrameReply::Accepted { per_operation, .. } => match per_operation.into_head() {
-                SubReply::Ok(payload) => payload,
-                other => panic!("expected accepted reply payload, got {other:?}"),
-            },
-            other => panic!("expected accepted reply, got {other:?}"),
-        },
-        other => panic!("expected reply operation, got {other:?}"),
-    }
+fn round_trip_output(output: Output) -> Output {
+    let frame = output.encode_signal_frame().expect("encode output");
+    let (_route, decoded) = Output::decode_signal_frame(&frame).expect("decode output");
+    decoded
 }
 
 fn round_trip_nota<Value>(value: Value, expected: &str)
@@ -83,95 +47,55 @@ where
 }
 
 #[test]
-fn meta_spirit_requests_round_trip() {
-    let requests = [
-        Operation::Start(Start {
-            generation: Generation::new(1),
-        }),
-        Operation::Drain(Drain {}),
-        Operation::Reload(BootstrapPolicy {}),
-        Operation::Register(registration()),
-        Operation::Retire(retirement()),
+fn meta_spirit_inputs_round_trip() {
+    let inputs = [
+        Input::configure(ConfigureRequest::new(ArchiveDatabaseTarget::Default)),
+        Input::import(ImportedRecords::new(Vec::new()).into()),
     ];
 
-    for request in requests {
-        assert_eq!(round_trip_request(request.clone()), request);
+    for input in inputs {
+        assert_eq!(round_trip_input(input.clone()), input);
     }
 }
 
 #[test]
-fn meta_spirit_replies_round_trip() {
-    let replies = [
-        Reply::Started(Started {
-            generation: Generation::new(1),
+fn meta_spirit_outputs_round_trip() {
+    let outputs = [
+        Output::configured(ConfigureReceipt {
+            archive_database_target: ArchiveDatabaseTarget::Default,
+            database_marker: database_marker(),
         }),
-        Reply::DrainedAndStopped(DrainedAndStopped {}),
-        Reply::BootstrapPolicyReloaded(BootstrapPolicyReloaded {}),
-        Reply::IdentityRegistered(IdentityRegistered {
-            name: IdentityName::new("author"),
-        }),
-        Reply::IdentityRetired(IdentityRetired {
-            name: IdentityName::new("author"),
-        }),
-        Reply::RequestUnimplemented(RequestUnimplemented {
-            reason: UnimplementedReason::NotBuiltYet,
+        Output::imported(ImportReceipt {
+            record_count: RecordCount::new(0),
+            database_marker: database_marker(),
         }),
     ];
 
-    for reply in replies {
-        assert_eq!(round_trip_reply(reply.clone()), reply);
+    for output in outputs {
+        assert_eq!(round_trip_output(output.clone()), output);
     }
-}
-
-#[test]
-fn meta_spirit_reply_payloads_convert_through_macro_generated_from_impls() {
-    let reply: Reply = Started {
-        generation: Generation::new(1),
-    }
-    .into();
-
-    assert_eq!(
-        reply,
-        Reply::Started(Started {
-            generation: Generation::new(1),
-        })
-    );
 }
 
 #[test]
 fn meta_spirit_request_variants_are_contract_local_verbs() {
-    assert_eq!(
-        Operation::HEADS,
-        &["Start", "Drain", "Reload", "Register", "Retire"]
-    );
-}
-
-#[test]
-fn meta_spirit_request_heads_have_no_universal_verb_wrapper() {
-    round_trip_nota(
-        Operation::Start(Start {
-            generation: Generation::new(1),
-        }),
-        "(Start (1))",
-    );
-    round_trip_nota(Operation::Drain(Drain {}), "(Drain ())");
-    round_trip_nota(Operation::Reload(BootstrapPolicy {}), "(Reload ())");
-    round_trip_nota(Operation::Register(registration()), "(Register ([author]))");
-    round_trip_nota(Operation::Retire(retirement()), "(Retire ([author]))");
+    assert_eq!(Input::HEADS, &["Configure", "Import"]);
 }
 
 #[test]
 fn meta_spirit_canonical_examples_round_trip() {
     round_trip_nota(
-        Reply::Started(Started {
-            generation: Generation::new(1),
-        }),
-        "(Started (1))",
+        Input::configure(ConfigureRequest::new(ArchiveDatabaseTarget::Default)),
+        "(Configure Default)",
     );
     round_trip_nota(
-        Reply::RequestUnimplemented(RequestUnimplemented {
-            reason: UnimplementedReason::NotBuiltYet,
+        Input::import(ImportedRecords::new(Vec::new()).into()),
+        "(Import [])",
+    );
+    round_trip_nota(
+        Output::configured(ConfigureReceipt {
+            archive_database_target: ArchiveDatabaseTarget::Default,
+            database_marker: database_marker(),
         }),
-        "(RequestUnimplemented (NotBuiltYet))",
+        "(Configured (Default (1 2)))",
     );
 }
