@@ -19,6 +19,6 @@ no actors, no sockets, no storage, and no classifier logic.
 ## Invariants
 
 - Supervisor lifecycle and policy orders live here, not in the ordinary spirit contract.
-- Every request variant declares a Signal root verb through `signal_channel!`.
+- Every request variant is declared as a schema root in `schema/meta-signal.schema`.
 - Shared spirit nouns are imported from `signal-spirit`; do not duplicate them.
 - Runtime interpretation stays in `spirit`.
