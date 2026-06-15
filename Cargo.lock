@@ -30,9 +30,9 @@ dependencies = [
 
 [[package]]
 name = "bumpalo"
-version = "3.20.2"
+version = "3.20.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5d20789868f4b01b2f2caec9f5c4e0213b41e3e5702a50157d699ae31ced2fcb"
+checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
 
 [[package]]
 name = "bytecheck"
@@ -148,13 +148,12 @@ dependencies = [
 
 [[package]]
 name = "js-sys"
-version = "0.3.98"
+version = "0.3.102"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "67df7112613f8bfd9150013a0314e196f4800d3201ae742489d999db2f979f08"
+checksum = "03d04c30968dffe80775bd4d7fb676131cd04a1fb46d2686dbffbaec2d9dfd31"
 dependencies = [
  "cfg-if",
  "futures-util",
- "once_cell",
  "wasm-bindgen",
 ]
 
@@ -168,7 +167,7 @@ checksum = "68ab91017fe16c622486840e4c83c9a37afeff978bd239b5293d61ece587de66"
 name = "meta-signal-spirit"
 version = "0.1.0"
 dependencies = [
- "nota-next 0.5.0",
+ "nota-next",
  "rkyv",
  "schema-rust-next",
  "signal-frame",
@@ -198,36 +197,17 @@ dependencies = [
 
 [[package]]
 name = "nota-next"
-version = "0.4.0"
-source = "git+https://github.com/LiGoldragon/nota-next.git?branch=main#3d6c2cdf4a7a62b36640b8622fdcaa2b931f0d43"
-dependencies = [
- "nota-next-derive 0.2.0",
- "rkyv",
-]
-
-[[package]]
-name = "nota-next"
 version = "0.5.0"
-source = "git+https://github.com/LiGoldragon/nota-next.git?branch=structural-forms-integration#00d00504ef2f6c590761916eb438ca1a66fdab94"
+source = "git+https://github.com/LiGoldragon/nota-next.git?branch=main#f9155de55353900ec023b3bb76336b902b8736c1"
 dependencies = [
- "nota-next-derive 0.3.0",
+ "nota-next-derive",
  "rkyv",
-]
-
-[[package]]
-name = "nota-next-derive"
-version = "0.2.0"
-source = "git+https://github.com/LiGoldragon/nota-next.git?branch=main#3d6c2cdf4a7a62b36640b8622fdcaa2b931f0d43"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
 ]
 
 [[package]]
 name = "nota-next-derive"
 version = "0.3.0"
-source = "git+https://github.com/LiGoldragon/nota-next.git?branch=structural-forms-integration#00d00504ef2f6c590761916eb438ca1a66fdab94"
+source = "git+https://github.com/LiGoldragon/nota-next.git?branch=main#f9155de55353900ec023b3bb76336b902b8736c1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -357,17 +337,18 @@ checksum = "b39cdef0fa800fc44525c84ccb54a029961a8215f9619753635a9c0d2538d46d"
 [[package]]
 name = "schema-next"
 version = "0.2.0"
-source = "git+https://github.com/LiGoldragon/schema-next.git?branch=structural-forms-integration#2bb0228e503972ba4112bf420b8a55835d366285"
+source = "git+https://github.com/LiGoldragon/schema-next.git?branch=main#f00a467a9aee9d50980089d07b21b4180073de12"
 dependencies = [
  "blake3",
- "nota-next 0.5.0",
+ "nota-next",
  "rkyv",
+ "thiserror",
 ]
 
 [[package]]
 name = "schema-rust-next"
 version = "0.5.3"
-source = "git+https://github.com/LiGoldragon/schema-rust-next.git?branch=structural-forms-integration#573375da23134be8f07172c0ffa72416580c403d"
+source = "git+https://github.com/LiGoldragon/schema-rust-next.git?branch=main#bb378931c95dcfa7ccb2dfc81bcacfb9c7d1161e"
 dependencies = [
  "prettyplease",
  "proc-macro2",
@@ -388,7 +369,7 @@ name = "signal-frame"
 version = "0.2.1"
 source = "git+https://github.com/LiGoldragon/signal-frame.git?branch=main#166bda84dc63bf8461fff11a41c43d6a1c92a941"
 dependencies = [
- "nota-next 0.4.0",
+ "nota-next",
  "paste",
  "rkyv",
  "signal-frame-macros",
@@ -408,9 +389,9 @@ dependencies = [
 [[package]]
 name = "signal-spirit"
 version = "0.6.0"
-source = "git+https://github.com/LiGoldragon/signal-spirit.git?branch=structural-forms-integration#e85830b1a64e98342ee1dcc3dca4c4c29ba59d3b"
+source = "git+https://github.com/LiGoldragon/signal-spirit.git?branch=main#f81afd2d7fedc00dc5d24871ddc1715c6955a016"
 dependencies = [
- "nota-next 0.5.0",
+ "nota-next",
  "rkyv",
  "schema-rust-next",
  "signal-frame",
@@ -484,9 +465,9 @@ checksum = "e6e4313cd5fcd3dad5cafa179702e2b244f760991f45397d14d4ebf38247da75"
 
 [[package]]
 name = "uuid"
-version = "1.23.1"
+version = "1.23.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ddd74a9687298c6858e9b88ec8935ec45d22e8fd5e6394fa1bd4e99a87789c76"
+checksum = "144d6b123cef80b301b8f72a9e2ca4370ddec21950d0a103dd22c437006d2db7"
 dependencies = [
  "js-sys",
  "wasm-bindgen",
@@ -497,16 +478,16 @@ name = "version-projection"
 version = "0.1.0"
 source = "git+https://github.com/LiGoldragon/version-projection.git?branch=main#f00b239f75aca30098a60b30e877faafe8625d77"
 dependencies = [
- "nota-next 0.4.0",
+ "nota-next",
  "rkyv",
  "thiserror",
 ]
 
 [[package]]
 name = "wasm-bindgen"
-version = "0.2.121"
+version = "0.2.125"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "49ace1d07c165b0864824eee619580c4689389afa9dc9ed3a4c75040d82e6790"
+checksum = "8ddb3f79143bced6de84270411622a2699cee572fc0875aeaf1e7867cf9fca1a"
 dependencies = [
  "cfg-if",
  "once_cell",
@@ -517,9 +498,9 @@ dependencies = [
 
 [[package]]
 name = "wasm-bindgen-macro"
-version = "0.2.121"
+version = "0.2.125"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8e68e6f4afd367a562002c05637acb8578ff2dea1943df76afb9e83d177c8578"
+checksum = "4e21a184b13fb19e157296e2c46056aec9092264fab83e4ba59e68c61b323c3d"
 dependencies = [
  "quote",
  "wasm-bindgen-macro-support",
@@ -527,9 +508,9 @@ dependencies = [
 
 [[package]]
 name = "wasm-bindgen-macro-support"
-version = "0.2.121"
+version = "0.2.125"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d95a9ec35c64b2a7cb35d3fead40c4238d0940c86d107136999567a4703259f2"
+checksum = "fecefd9c35bd935a20fc3fc344b5f29138961e4f47fb03297d88f2587afb5ebd"
 dependencies = [
  "bumpalo",
  "proc-macro2",
@@ -540,9 +521,9 @@ dependencies = [
 
 [[package]]
 name = "wasm-bindgen-shared"
-version = "0.2.121"
+version = "0.2.125"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c4e0100b01e9f0d03189a92b96772a1fb998639d981193d7dbab487302513441"
+checksum = "23939e44bb9a5d7576fa2b563dc2e136628f1224e88a8deed09e04858b77871f"
 dependencies = [
  "unicode-ident",
 ]
