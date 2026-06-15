@@ -14,16 +14,16 @@
   Rejected ConfigureRejection
 
   ArchivePathText String
-  ArchivePath { ArchivePathText * }
+  ArchivePath { ArchivePathText }
   ArchiveDatabaseTarget [Default (Path ArchivePath)]
 
-  ConfigureRequest { ArchiveDatabaseTarget * }
-  ConfigureReceipt { ArchiveDatabaseTarget * DatabaseMarker * }
-  ConfigureRejection { ConfigureRejectionReason * DatabaseMarker * }
+  ConfigureRequest { ArchiveDatabaseTarget }
+  ConfigureReceipt { ArchiveDatabaseTarget DatabaseMarker }
+  ConfigureRejection { ConfigureRejectionReason DatabaseMarker }
   ConfigureRejectionReason [ArchiveTargetUnwritable InternalError]
 
-  ImportedRecord { RecordIdentifier * Entry * }
+  ImportedRecord { RecordIdentifier Entry }
   ImportedRecords (Vec ImportedRecord)
-  ImportRequest { ImportedRecords * }
-  ImportReceipt { RecordCount * DatabaseMarker * }
+  ImportRequest { ImportedRecords }
+  ImportReceipt { RecordCount DatabaseMarker }
 }
