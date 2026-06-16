@@ -1,4 +1,5 @@
-(Configure Default)
+(Configure (Default None))
+(Configure (Default (Some (Address 100.64.0.7:7777))))
 (Import [])
-(Configured (Default (1 2)))
+(Configured (Default None (1 2)))
 (Imported (0 (1 2)))
