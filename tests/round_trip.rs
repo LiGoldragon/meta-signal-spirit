@@ -2,7 +2,7 @@
 
 use meta_signal_spirit::{
     ArchiveDatabaseTarget, ConfigureReceipt, ConfigureRequest, ImportReceipt, ImportedRecords,
-    Input, Output,
+    Input, MirrorAddress, MirrorAddressText, MirrorTarget, Output,
 };
 use nota_next::{NotaDecode, NotaEncode, NotaSource};
 use signal_frame::SignalOperationHeads;
@@ -49,7 +49,16 @@ where
 #[test]
 fn meta_spirit_inputs_round_trip() {
     let inputs = [
-        Input::configure(ConfigureRequest::new(ArchiveDatabaseTarget::Default)),
+        Input::configure(ConfigureRequest {
+            archive_database_target: ArchiveDatabaseTarget::Default,
+            mirror_target: None,
+        }),
+        Input::configure(ConfigureRequest {
+            archive_database_target: ArchiveDatabaseTarget::Default,
+            mirror_target: Some(MirrorTarget::Address(MirrorAddress::new(
+                MirrorAddressText::new("100.64.0.7:7777"),
+            ))),
+        }),
         Input::import(ImportedRecords::new(Vec::new()).into()),
     ];
 
@@ -63,6 +72,7 @@ fn meta_spirit_outputs_round_trip() {
     let outputs = [
         Output::configured(ConfigureReceipt {
             archive_database_target: ArchiveDatabaseTarget::Default,
+            mirror_target: None,
             database_marker: database_marker(),
         }),
         Output::imported(ImportReceipt {
@@ -84,8 +94,20 @@ fn meta_spirit_request_variants_are_contract_local_verbs() {
 #[test]
 fn meta_spirit_canonical_examples_round_trip() {
     round_trip_nota(
-        Input::configure(ConfigureRequest::new(ArchiveDatabaseTarget::Default)),
-        "(Configure Default)",
+        Input::configure(ConfigureRequest {
+            archive_database_target: ArchiveDatabaseTarget::Default,
+            mirror_target: None,
+        }),
+        "(Configure (Default None))",
+    );
+    round_trip_nota(
+        Input::configure(ConfigureRequest {
+            archive_database_target: ArchiveDatabaseTarget::Default,
+            mirror_target: Some(MirrorTarget::Address(MirrorAddress::new(
+                MirrorAddressText::new("100.64.0.7:7777"),
+            ))),
+        }),
+        "(Configure (Default (Some (Address 100.64.0.7:7777))))",
     );
     round_trip_nota(
         Input::import(ImportedRecords::new(Vec::new()).into()),
@@ -94,8 +116,9 @@ fn meta_spirit_canonical_examples_round_trip() {
     round_trip_nota(
         Output::configured(ConfigureReceipt {
             archive_database_target: ArchiveDatabaseTarget::Default,
+            mirror_target: None,
             database_marker: database_marker(),
         }),
-        "(Configured (Default (1 2)))",
+        "(Configured (Default None (1 2)))",
     );
 }
