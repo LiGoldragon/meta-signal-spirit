@@ -335,13 +335,27 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b39cdef0fa800fc44525c84ccb54a029961a8215f9619753635a9c0d2538d46d"
 
 [[package]]
+name = "schema-cc"
+version = "0.1.0"
+source = "git+https://github.com/LiGoldragon/schema-next.git?branch=main#caa7797197540cd17e87ca78e93dca97b2e143c6"
+dependencies = [
+ "nota-next",
+ "prettyplease",
+ "proc-macro2",
+ "quote",
+ "syn",
+ "thiserror",
+]
+
+[[package]]
 name = "schema-next"
 version = "0.2.0"
-source = "git+https://github.com/LiGoldragon/schema-next.git?branch=main#f00a467a9aee9d50980089d07b21b4180073de12"
+source = "git+https://github.com/LiGoldragon/schema-next.git?branch=main#caa7797197540cd17e87ca78e93dca97b2e143c6"
 dependencies = [
  "blake3",
  "nota-next",
  "rkyv",
+ "schema-cc",
  "thiserror",
 ]
 
@@ -389,7 +403,7 @@ dependencies = [
 [[package]]
 name = "signal-spirit"
 version = "0.6.0"
-source = "git+https://github.com/LiGoldragon/signal-spirit.git?branch=main#f81afd2d7fedc00dc5d24871ddc1715c6955a016"
+source = "git+https://github.com/LiGoldragon/signal-spirit.git?branch=main#019a1330bc7e811b309700293c129e40e6a112f3"
 dependencies = [
  "nota-next",
  "rkyv",
