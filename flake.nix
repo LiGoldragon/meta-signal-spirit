@@ -48,9 +48,9 @@
         checks = {
           build = craneLib.cargoBuild (commonArguments // { inherit cargoArtifacts; });
           test = craneLib.cargoTest (commonArguments // { inherit cargoArtifacts; });
-          test-round-trip = craneLib.cargoTest (commonArguments // {
+          test-nota-text = craneLib.cargoTest (commonArguments // {
             inherit cargoArtifacts;
-            cargoTestExtraArgs = "--test round_trip";
+            cargoTestExtraArgs = "--features nota-text --test round_trip";
           });
           doc = craneLib.cargoDoc (commonArguments // {
             inherit cargoArtifacts;
@@ -60,6 +60,10 @@
           clippy = craneLib.cargoClippy (commonArguments // {
             inherit cargoArtifacts;
             cargoClippyExtraArgs = "--all-targets -- -D warnings";
+          });
+          clippy-nota-text = craneLib.cargoClippy (commonArguments // {
+            inherit cargoArtifacts;
+            cargoClippyExtraArgs = "--all-targets --features nota-text -- -D warnings";
           });
         };
         devShells.default = pkgs.mkShell {
