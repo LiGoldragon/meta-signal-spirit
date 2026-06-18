@@ -86,9 +86,14 @@ pub enum MirrorTarget {
 #[rustfmt::skip]
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct SelectedMirrorTarget(Option<MirrorTarget>);
+
+#[rustfmt::skip]
+#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct ConfigureRequest {
     pub archive_database_target: ArchiveDatabaseTarget,
-    pub mirror_target: Option<MirrorTarget>,
+    pub selected_mirror_target: SelectedMirrorTarget,
 }
 
 #[rustfmt::skip]
@@ -96,7 +101,7 @@ pub struct ConfigureRequest {
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct ConfigureReceipt {
     pub archive_database_target: ArchiveDatabaseTarget,
-    pub mirror_target: Option<MirrorTarget>,
+    pub selected_mirror_target: SelectedMirrorTarget,
     pub database_marker: DatabaseMarker,
 }
 
@@ -371,6 +376,25 @@ impl MirrorAddress {
 #[rustfmt::skip]
 impl From<MirrorAddressText> for MirrorAddress {
     fn from(payload: MirrorAddressText) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl SelectedMirrorTarget {
+    pub fn new(payload: Option<MirrorTarget>) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &Option<MirrorTarget> {
+        &self.0
+    }
+    pub fn into_payload(self) -> Option<MirrorTarget> {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<Option<MirrorTarget>> for SelectedMirrorTarget {
+    fn from(payload: Option<MirrorTarget>) -> Self {
         Self::new(payload)
     }
 }

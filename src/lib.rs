@@ -17,3 +17,37 @@ pub type MetaReply = Output;
 
 pub const META_SIGNAL_SCHEMA_SOURCE: &str = include_str!("../schema/meta-signal.schema");
 pub const META_SIGNAL_RUST_SOURCE: &str = include_str!("schema/meta_signal.rs");
+
+impl ConfigureRequest {
+    pub fn new(
+        archive_database_target: ArchiveDatabaseTarget,
+        mirror_target: Option<MirrorTarget>,
+    ) -> Self {
+        Self {
+            archive_database_target,
+            selected_mirror_target: SelectedMirrorTarget::new(mirror_target),
+        }
+    }
+
+    pub fn mirror_target(&self) -> Option<&MirrorTarget> {
+        self.selected_mirror_target.payload().as_ref()
+    }
+}
+
+impl ConfigureReceipt {
+    pub fn new(
+        archive_database_target: ArchiveDatabaseTarget,
+        mirror_target: Option<MirrorTarget>,
+        database_marker: signal_spirit::DatabaseMarker,
+    ) -> Self {
+        Self {
+            archive_database_target,
+            selected_mirror_target: SelectedMirrorTarget::new(mirror_target),
+            database_marker,
+        }
+    }
+
+    pub fn mirror_target(&self) -> Option<&MirrorTarget> {
+        self.selected_mirror_target.payload().as_ref()
+    }
+}

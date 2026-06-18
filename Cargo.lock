@@ -337,7 +337,7 @@ checksum = "b39cdef0fa800fc44525c84ccb54a029961a8215f9619753635a9c0d2538d46d"
 [[package]]
 name = "schema-cc"
 version = "0.1.0"
-source = "git+https://github.com/LiGoldragon/schema-next.git?branch=main#abae95f999c09491c706f39b6fdef48a3530b7f1"
+source = "git+https://github.com/LiGoldragon/schema-next.git?branch=main#1de72dde6241b15299cd37fe096b3ef0e2f618b6"
 dependencies = [
  "nota-next",
  "prettyplease",
@@ -350,7 +350,7 @@ dependencies = [
 [[package]]
 name = "schema-next"
 version = "0.2.0"
-source = "git+https://github.com/LiGoldragon/schema-next.git?branch=main#abae95f999c09491c706f39b6fdef48a3530b7f1"
+source = "git+https://github.com/LiGoldragon/schema-next.git?branch=main#1de72dde6241b15299cd37fe096b3ef0e2f618b6"
 dependencies = [
  "blake3",
  "nota-next",
@@ -403,7 +403,7 @@ dependencies = [
 [[package]]
 name = "signal-spirit"
 version = "0.7.0"
-source = "git+https://github.com/LiGoldragon/signal-spirit.git?branch=main#e5f432b2bda97a250b75fc397eeeb6f7256dff1b"
+source = "git+https://github.com/LiGoldragon/signal-spirit.git?branch=main#e971059cd5af3e321487260da762b6a066864db8"
 dependencies = [
  "nota-next",
  "rkyv",

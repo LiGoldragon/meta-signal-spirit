@@ -51,13 +51,14 @@ fn meta_spirit_inputs_round_trip() {
     let inputs = [
         Input::configure(ConfigureRequest {
             archive_database_target: ArchiveDatabaseTarget::Default,
-            mirror_target: None,
+            selected_mirror_target: None.into(),
         }),
         Input::configure(ConfigureRequest {
             archive_database_target: ArchiveDatabaseTarget::Default,
-            mirror_target: Some(MirrorTarget::Address(MirrorAddress::new(
+            selected_mirror_target: Some(MirrorTarget::Address(MirrorAddress::new(
                 MirrorAddressText::new("100.64.0.7:7777"),
-            ))),
+            )))
+            .into(),
         }),
         Input::import(ImportedRecords::new(Vec::new()).into()),
     ];
@@ -72,7 +73,7 @@ fn meta_spirit_outputs_round_trip() {
     let outputs = [
         Output::configured(ConfigureReceipt {
             archive_database_target: ArchiveDatabaseTarget::Default,
-            mirror_target: None,
+            selected_mirror_target: None.into(),
             database_marker: database_marker(),
         }),
         Output::imported(ImportReceipt {
@@ -96,16 +97,17 @@ fn meta_spirit_canonical_examples_round_trip() {
     round_trip_nota(
         Input::configure(ConfigureRequest {
             archive_database_target: ArchiveDatabaseTarget::Default,
-            mirror_target: None,
+            selected_mirror_target: None.into(),
         }),
         "(Configure (Default None))",
     );
     round_trip_nota(
         Input::configure(ConfigureRequest {
             archive_database_target: ArchiveDatabaseTarget::Default,
-            mirror_target: Some(MirrorTarget::Address(MirrorAddress::new(
+            selected_mirror_target: Some(MirrorTarget::Address(MirrorAddress::new(
                 MirrorAddressText::new("100.64.0.7:7777"),
-            ))),
+            )))
+            .into(),
         }),
         "(Configure (Default (Some (Address 100.64.0.7:7777))))",
     );
@@ -116,7 +118,7 @@ fn meta_spirit_canonical_examples_round_trip() {
     round_trip_nota(
         Output::configured(ConfigureReceipt {
             archive_database_target: ArchiveDatabaseTarget::Default,
-            mirror_target: None,
+            selected_mirror_target: None.into(),
             database_marker: database_marker(),
         }),
         "(Configured (Default None (1 2)))",
