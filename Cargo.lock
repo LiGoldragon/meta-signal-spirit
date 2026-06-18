@@ -337,7 +337,7 @@ checksum = "b39cdef0fa800fc44525c84ccb54a029961a8215f9619753635a9c0d2538d46d"
 [[package]]
 name = "schema-cc"
 version = "0.1.0"
-source = "git+https://github.com/LiGoldragon/schema-next.git?branch=main#e721626038e81cce49a7b193b07903b2868e1f68"
+source = "git+https://github.com/LiGoldragon/schema-next.git?branch=main#abae95f999c09491c706f39b6fdef48a3530b7f1"
 dependencies = [
  "nota-next",
  "prettyplease",
@@ -350,7 +350,7 @@ dependencies = [
 [[package]]
 name = "schema-next"
 version = "0.2.0"
-source = "git+https://github.com/LiGoldragon/schema-next.git?branch=main#e721626038e81cce49a7b193b07903b2868e1f68"
+source = "git+https://github.com/LiGoldragon/schema-next.git?branch=main#abae95f999c09491c706f39b6fdef48a3530b7f1"
 dependencies = [
  "blake3",
  "nota-next",
@@ -362,7 +362,7 @@ dependencies = [
 [[package]]
 name = "schema-rust-next"
 version = "0.5.3"
-source = "git+https://github.com/LiGoldragon/schema-rust-next.git?branch=main#6e04d70ff679181938c50b6a5488035efa0979b8"
+source = "git+https://github.com/LiGoldragon/schema-rust-next.git?branch=main#733b76d39cbd3009bedd22899f2695b7d68b283a"
 dependencies = [
  "prettyplease",
  "proc-macro2",
@@ -402,8 +402,8 @@ dependencies = [
 
 [[package]]
 name = "signal-spirit"
-version = "0.6.0"
-source = "git+https://github.com/LiGoldragon/signal-spirit.git?branch=main#2688a58af93a112d0f115ec428c48a0d00d0878e"
+version = "0.7.0"
+source = "git+https://github.com/LiGoldragon/signal-spirit.git?branch=main#e5f432b2bda97a250b75fc397eeeb6f7256dff1b"
 dependencies = [
  "nota-next",
  "rkyv",
