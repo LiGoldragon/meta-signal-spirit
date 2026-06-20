@@ -286,24 +286,6 @@ impl From<String> for ArchivePathText {
         Self::new(payload)
     }
 }
-#[rustfmt::skip]
-impl std::fmt::Display for ArchivePathText {
-    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        self.payload().fmt(formatter)
-    }
-}
-#[rustfmt::skip]
-impl AsRef<str> for ArchivePathText {
-    fn as_ref(&self) -> &str {
-        self.payload().as_str()
-    }
-}
-#[rustfmt::skip]
-impl PartialEq<&str> for ArchivePathText {
-    fn eq(&self, other: &&str) -> bool {
-        self.payload() == other
-    }
-}
 
 #[rustfmt::skip]
 impl ArchivePath {
@@ -340,24 +322,6 @@ impl MirrorAddressText {
 impl From<String> for MirrorAddressText {
     fn from(payload: String) -> Self {
         Self::new(payload)
-    }
-}
-#[rustfmt::skip]
-impl std::fmt::Display for MirrorAddressText {
-    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        self.payload().fmt(formatter)
-    }
-}
-#[rustfmt::skip]
-impl AsRef<str> for MirrorAddressText {
-    fn as_ref(&self) -> &str {
-        self.payload().as_str()
-    }
-}
-#[rustfmt::skip]
-impl PartialEq<&str> for MirrorAddressText {
-    fn eq(&self, other: &&str) -> bool {
-        self.payload() == other
     }
 }
 
