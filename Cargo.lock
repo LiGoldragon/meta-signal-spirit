@@ -428,7 +428,7 @@ dependencies = [
 [[package]]
 name = "signal-spirit"
 version = "0.8.0"
-source = "git+https://github.com/LiGoldragon/signal-spirit.git?branch=schema-help#69284bf4d0701850b5de5168131c445b622bc8b0"
+source = "git+https://github.com/LiGoldragon/signal-spirit.git?branch=schema-help#974d4a1390347362c481996930890035329ff698"
 dependencies = [
  "nota-next",
  "rkyv",
