@@ -1,8 +1,9 @@
 #![cfg(feature = "nota-text")]
 
 use meta_signal_spirit::{
-    ArchiveDatabaseTarget, ConfigureReceipt, ConfigureRequest, ImportReceipt, ImportedRecords,
-    Input, MirrorAddress, MirrorAddressText, MirrorTarget, Output,
+    ArchiveDatabaseTarget, ConfigureReceipt, ConfigureRequest, CriomeGateTarget, CriomeSocketPath,
+    CriomeSocketPathText, ImportReceipt, ImportedRecords, Input, MirrorAddress, MirrorAddressText,
+    MirrorTarget, Output,
 };
 use nota_next::{NotaDecode, NotaEncode, NotaSource};
 use signal_frame::SignalOperationHeads;
@@ -52,11 +53,16 @@ fn meta_spirit_inputs_round_trip() {
         Input::configure(ConfigureRequest {
             archive_database_target: ArchiveDatabaseTarget::Default,
             selected_mirror_target: None.into(),
+            selected_criome_gate_target: None.into(),
         }),
         Input::configure(ConfigureRequest {
             archive_database_target: ArchiveDatabaseTarget::Default,
             selected_mirror_target: Some(MirrorTarget::Address(MirrorAddress::new(
                 MirrorAddressText::new("100.64.0.7:7777"),
+            )))
+            .into(),
+            selected_criome_gate_target: Some(CriomeGateTarget::Socket(CriomeSocketPath::new(
+                CriomeSocketPathText::new("/run/user/1001/criome.sock"),
             )))
             .into(),
         }),
@@ -74,6 +80,7 @@ fn meta_spirit_outputs_round_trip() {
         Output::configured(ConfigureReceipt {
             archive_database_target: ArchiveDatabaseTarget::Default,
             selected_mirror_target: None.into(),
+            selected_criome_gate_target: None.into(),
             database_marker: database_marker(),
         }),
         Output::imported(ImportReceipt {
@@ -98,8 +105,9 @@ fn meta_spirit_canonical_examples_round_trip() {
         Input::configure(ConfigureRequest {
             archive_database_target: ArchiveDatabaseTarget::Default,
             selected_mirror_target: None.into(),
+            selected_criome_gate_target: None.into(),
         }),
-        "(Configure (Default None))",
+        "(Configure (Default None None))",
     );
     round_trip_nota(
         Input::configure(ConfigureRequest {
@@ -108,8 +116,12 @@ fn meta_spirit_canonical_examples_round_trip() {
                 MirrorAddressText::new("100.64.0.7:7777"),
             )))
             .into(),
+            selected_criome_gate_target: Some(CriomeGateTarget::Socket(CriomeSocketPath::new(
+                CriomeSocketPathText::new("/run/user/1001/criome.sock"),
+            )))
+            .into(),
         }),
-        "(Configure (Default (Some (Address 100.64.0.7:7777))))",
+        "(Configure (Default (Some (Address 100.64.0.7:7777)) (Some (Socket /run/user/1001/criome.sock))))",
     );
     round_trip_nota(
         Input::import(ImportedRecords::new(Vec::new()).into()),
@@ -119,8 +131,9 @@ fn meta_spirit_canonical_examples_round_trip() {
         Output::configured(ConfigureReceipt {
             archive_database_target: ArchiveDatabaseTarget::Default,
             selected_mirror_target: None.into(),
+            selected_criome_gate_target: None.into(),
             database_marker: database_marker(),
         }),
-        "(Configured (Default None (1 2)))",
+        "(Configured (Default None None (1 2)))",
     );
 }

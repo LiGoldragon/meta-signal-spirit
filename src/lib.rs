@@ -22,15 +22,21 @@ impl ConfigureRequest {
     pub fn new(
         archive_database_target: ArchiveDatabaseTarget,
         mirror_target: Option<MirrorTarget>,
+        criome_gate_target: Option<CriomeGateTarget>,
     ) -> Self {
         Self {
             archive_database_target,
             selected_mirror_target: SelectedMirrorTarget::new(mirror_target),
+            selected_criome_gate_target: SelectedCriomeGateTarget::new(criome_gate_target),
         }
     }
 
     pub fn mirror_target(&self) -> Option<&MirrorTarget> {
         self.selected_mirror_target.payload().as_ref()
+    }
+
+    pub fn criome_gate_target(&self) -> Option<&CriomeGateTarget> {
+        self.selected_criome_gate_target.payload().as_ref()
     }
 }
 
@@ -38,16 +44,22 @@ impl ConfigureReceipt {
     pub fn new(
         archive_database_target: ArchiveDatabaseTarget,
         mirror_target: Option<MirrorTarget>,
+        criome_gate_target: Option<CriomeGateTarget>,
         database_marker: signal_spirit::DatabaseMarker,
     ) -> Self {
         Self {
             archive_database_target,
             selected_mirror_target: SelectedMirrorTarget::new(mirror_target),
+            selected_criome_gate_target: SelectedCriomeGateTarget::new(criome_gate_target),
             database_marker,
         }
     }
 
     pub fn mirror_target(&self) -> Option<&MirrorTarget> {
         self.selected_mirror_target.payload().as_ref()
+    }
+
+    pub fn criome_gate_target(&self) -> Option<&CriomeGateTarget> {
+        self.selected_criome_gate_target.payload().as_ref()
     }
 }

@@ -21,9 +21,14 @@
   MirrorAddress { MirrorAddressText }
   MirrorTarget [Default (Address MirrorAddress)]
 
+  CriomeSocketPathText String
+  CriomeSocketPath { CriomeSocketPathText }
+  CriomeGateTarget [Default (Socket CriomeSocketPath)]
+
   SelectedMirrorTarget (Optional MirrorTarget)
-  ConfigureRequest { ArchiveDatabaseTarget SelectedMirrorTarget }
-  ConfigureReceipt { ArchiveDatabaseTarget SelectedMirrorTarget DatabaseMarker }
+  SelectedCriomeGateTarget (Optional CriomeGateTarget)
+  ConfigureRequest { ArchiveDatabaseTarget SelectedMirrorTarget SelectedCriomeGateTarget }
+  ConfigureReceipt { ArchiveDatabaseTarget SelectedMirrorTarget SelectedCriomeGateTarget DatabaseMarker }
   ConfigureRejection { ConfigureRejectionReason DatabaseMarker }
   ConfigureRejectionReason [ArchiveTargetUnwritable InternalError]
 

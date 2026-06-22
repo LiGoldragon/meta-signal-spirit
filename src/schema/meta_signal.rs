@@ -86,7 +86,30 @@ pub enum MirrorTarget {
 #[rustfmt::skip]
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct CriomeSocketPathText(String);
+
+#[rustfmt::skip]
+#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct CriomeSocketPath(CriomeSocketPathText);
+
+#[rustfmt::skip]
+#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub enum CriomeGateTarget {
+    Default,
+    Socket(CriomeSocketPath),
+}
+
+#[rustfmt::skip]
+#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct SelectedMirrorTarget(Option<MirrorTarget>);
+
+#[rustfmt::skip]
+#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct SelectedCriomeGateTarget(Option<CriomeGateTarget>);
 
 #[rustfmt::skip]
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
@@ -94,6 +117,7 @@ pub struct SelectedMirrorTarget(Option<MirrorTarget>);
 pub struct ConfigureRequest {
     pub archive_database_target: ArchiveDatabaseTarget,
     pub selected_mirror_target: SelectedMirrorTarget,
+    pub selected_criome_gate_target: SelectedCriomeGateTarget,
 }
 
 #[rustfmt::skip]
@@ -102,6 +126,7 @@ pub struct ConfigureRequest {
 pub struct ConfigureReceipt {
     pub archive_database_target: ArchiveDatabaseTarget,
     pub selected_mirror_target: SelectedMirrorTarget,
+    pub selected_criome_gate_target: SelectedCriomeGateTarget,
     pub database_marker: DatabaseMarker,
 }
 
@@ -345,6 +370,44 @@ impl From<MirrorAddressText> for MirrorAddress {
 }
 
 #[rustfmt::skip]
+impl CriomeSocketPathText {
+    pub fn new(payload: impl Into<String>) -> Self {
+        Self(payload.into())
+    }
+    pub fn payload(&self) -> &String {
+        &self.0
+    }
+    pub fn into_payload(self) -> String {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<String> for CriomeSocketPathText {
+    fn from(payload: String) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl CriomeSocketPath {
+    pub fn new(payload: CriomeSocketPathText) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &CriomeSocketPathText {
+        &self.0
+    }
+    pub fn into_payload(self) -> CriomeSocketPathText {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<CriomeSocketPathText> for CriomeSocketPath {
+    fn from(payload: CriomeSocketPathText) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
 impl SelectedMirrorTarget {
     pub fn new(payload: Option<MirrorTarget>) -> Self {
         Self(payload)
@@ -359,6 +422,25 @@ impl SelectedMirrorTarget {
 #[rustfmt::skip]
 impl From<Option<MirrorTarget>> for SelectedMirrorTarget {
     fn from(payload: Option<MirrorTarget>) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl SelectedCriomeGateTarget {
+    pub fn new(payload: Option<CriomeGateTarget>) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &Option<CriomeGateTarget> {
+        &self.0
+    }
+    pub fn into_payload(self) -> Option<CriomeGateTarget> {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<Option<CriomeGateTarget>> for SelectedCriomeGateTarget {
+    fn from(payload: Option<CriomeGateTarget>) -> Self {
         Self::new(payload)
     }
 }
@@ -416,6 +498,13 @@ impl MirrorTarget {
 }
 
 #[rustfmt::skip]
+impl CriomeGateTarget {
+    pub fn socket(payload: CriomeSocketPathText) -> Self {
+        Self::Socket(CriomeSocketPath::new(payload))
+    }
+}
+
+#[rustfmt::skip]
 impl Input {
     pub fn configure(payload: ConfigureRequest) -> Self {
         Self::Configure(Configure::new(payload))
@@ -449,6 +538,13 @@ impl From<ArchivePath> for ArchiveDatabaseTarget {
 impl From<MirrorAddress> for MirrorTarget {
     fn from(payload: MirrorAddress) -> Self {
         Self::Address(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl From<CriomeSocketPath> for CriomeGateTarget {
+    fn from(payload: CriomeSocketPath) -> Self {
+        Self::Socket(payload)
     }
 }
 
