@@ -9,10 +9,11 @@ surface for privileged lifecycle/configuration operations that ordinary
 peers must not be able to send over `signal-spirit`.
 
 The public wire uses component-local verbs (`Configure`, `Import`).
-`Configure` sets the owner-controlled archive database target; `Import`
-restores pre-vetted records with stable identifiers over the owner-only
-meta socket. Sema vocabulary is daemon-side observation classification
-only and must not be the public request spine.
+`Configure` sets owner-controlled policy targets: the archive database target,
+the mirror target, and the local criome gate target. `Import` restores
+pre-vetted records with stable identifiers over the owner-only meta socket.
+Sema vocabulary is daemon-side observation classification only and must not be
+the public request spine.
 
 The contract is schema-derived from `schema/meta-signal.schema` and imports
 shared Spirit record nouns from `signal-spirit`. Its default graph is
