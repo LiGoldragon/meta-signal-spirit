@@ -3,11 +3,17 @@
 use meta_signal_spirit::{
     ArchiveDatabaseTarget, ConfigureReceipt, ConfigureRequest, CriomeGateTarget, CriomeSocketPath,
     CriomeSocketPathText, ImportReceipt, ImportedRecords, Input, MirrorAddress, MirrorAddressText,
-    MirrorTarget, Output,
+    MirrorTarget, Output, RemovalCandidatesCollectedReceipt,
 };
 use nota::{NotaDecode, NotaEncode, NotaSource};
 use signal_frame::SignalOperationHeads;
-use signal_spirit::schema::signal::{CommitSequence, DatabaseMarker, RecordCount, StateDigest};
+use signal_spirit::schema::signal::{
+    CertaintySelection, CommitSequence, DatabaseMarker, DomainMatch, ImportanceSelection,
+    Justification, KeywordMatch, PrivacySelection, Query, Reasoning, RecordCount, RecordQuery,
+    ReferentSelection, RemovalArchiveRecords, RemovalCandidateCollection,
+    RemovalCandidatesCollection, RemovedIdentifiers, SelectedKind, SkippedRemovalCandidates,
+    StateDigest, TextMatch,
+};
 
 const CANONICAL: &str = include_str!("../examples/canonical.nota");
 
@@ -15,6 +21,36 @@ fn database_marker() -> DatabaseMarker {
     DatabaseMarker {
         commit_sequence: CommitSequence::new(1),
         state_digest: StateDigest::new(2),
+    }
+}
+
+fn removal_candidate_collection() -> RemovalCandidateCollection {
+    RemovalCandidateCollection {
+        record_query: RecordQuery::new(Query {
+            domain_match: DomainMatch::Any,
+            keyword_match: KeywordMatch::Any,
+            text_match: TextMatch::Any,
+            referent_selection: ReferentSelection::Any,
+            selected_kind: SelectedKind::new(None),
+            privacy_selection: PrivacySelection::Any,
+            certainty_selection: CertaintySelection::Any,
+            importance_selection: ImportanceSelection::Any,
+        }),
+        justification: Justification {
+            testimony: Vec::new().into(),
+            reasoning: Reasoning::new("retire the matching candidates".to_owned()),
+        },
+    }
+}
+
+fn removal_candidates_collected_receipt() -> RemovalCandidatesCollectedReceipt {
+    RemovalCandidatesCollectedReceipt {
+        removal_candidates_collection: RemovalCandidatesCollection {
+            removal_archive_records: RemovalArchiveRecords::new(Vec::new()),
+            removed_identifiers: RemovedIdentifiers::new(Vec::new()),
+            skipped_removal_candidates: SkippedRemovalCandidates::new(Vec::new()),
+        },
+        database_marker: database_marker(),
     }
 }
 
@@ -96,7 +132,22 @@ fn meta_spirit_outputs_round_trip() {
 
 #[test]
 fn meta_spirit_request_variants_are_contract_local_verbs() {
-    assert_eq!(Input::HEADS, &["Configure", "Import"]);
+    assert_eq!(
+        Input::HEADS,
+        &["Configure", "Import", "CollectRemovalCandidates"]
+    );
+}
+
+#[test]
+fn collect_removal_candidates_input_round_trips() {
+    let input = Input::collect_removal_candidates(removal_candidate_collection().into());
+    assert_eq!(round_trip_input(input.clone()), input);
+}
+
+#[test]
+fn removal_candidates_collected_output_round_trips() {
+    let output = Output::removal_candidates_collected(removal_candidates_collected_receipt());
+    assert_eq!(round_trip_output(output.clone()), output);
 }
 
 #[test]
@@ -135,5 +186,17 @@ fn meta_spirit_canonical_examples_round_trip() {
             database_marker: database_marker(),
         }),
         "(Configured (Default None None (1 2)))",
+    );
+}
+
+#[test]
+fn collect_removal_candidates_canonical_examples_round_trip() {
+    round_trip_nota(
+        Input::collect_removal_candidates(removal_candidate_collection().into()),
+        "(CollectRemovalCandidates ((Any Any Any Any None Any Any Any) ([] [retire the matching candidates])))",
+    );
+    round_trip_nota(
+        Output::removal_candidates_collected(removal_candidates_collected_receipt()),
+        "(RemovalCandidatesCollected (([] [] []) (1 2)))",
     );
 }

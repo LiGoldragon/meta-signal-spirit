@@ -30,7 +30,7 @@ impl SchemaBuild {
             return;
         };
 
-        let plan = GenerationPlan::new(&self.crate_root, "meta-signal-spirit", "0.1.0")
+        let plan = GenerationPlan::new(&self.crate_root, "meta-signal-spirit", "0.2.0")
             .with_dependency_schema(signal_spirit)
             .with_module(ModuleEmission::wire_contract_module("meta-signal"));
 

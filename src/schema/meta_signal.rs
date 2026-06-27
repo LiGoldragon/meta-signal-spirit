@@ -17,6 +17,10 @@ pub use signal_spirit::schema::signal::Entry as Entry;
 pub use signal_spirit::schema::signal::RecordIdentifier as RecordIdentifier;
 #[rustfmt::skip]
 pub use signal_spirit::schema::signal::RecordCount as RecordCount;
+#[rustfmt::skip]
+pub use signal_spirit::schema::signal::RemovalCandidateCollection as RemovalCandidateCollection;
+#[rustfmt::skip]
+pub use signal_spirit::schema::signal::RemovalCandidatesCollection as RemovalCandidatesCollection;
 
 #[rustfmt::skip]
 #[cfg(feature = "nota-text")]
@@ -44,6 +48,14 @@ pub struct Import(ImportRequest);
     derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct CollectRemovalCandidates(CollectRemovalCandidatesRequest);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct Configured(ConfigureReceipt);
 
 #[rustfmt::skip]
@@ -53,6 +65,14 @@ pub struct Configured(ConfigureReceipt);
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct Imported(ImportReceipt);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct RemovalCandidatesCollected(RemovalCandidatesCollectedReceipt);
 
 #[rustfmt::skip]
 #[cfg_attr(
@@ -259,9 +279,29 @@ pub struct ImportReceipt {
     derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct CollectRemovalCandidatesRequest(RemovalCandidateCollection);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct RemovalCandidatesCollectedReceipt {
+    pub removal_candidates_collection: RemovalCandidatesCollection,
+    pub database_marker: DatabaseMarker,
+}
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub enum Input {
     Configure(Configure),
     Import(Import),
+    CollectRemovalCandidates(CollectRemovalCandidates),
 }
 
 #[rustfmt::skip]
@@ -273,6 +313,7 @@ pub enum Input {
 pub enum Output {
     Configured(Configured),
     Imported(Imported),
+    RemovalCandidatesCollected(RemovalCandidatesCollected),
     Rejected(Rejected),
 }
 
@@ -315,6 +356,25 @@ impl From<ImportRequest> for Import {
 }
 
 #[rustfmt::skip]
+impl CollectRemovalCandidates {
+    pub fn new(payload: CollectRemovalCandidatesRequest) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &CollectRemovalCandidatesRequest {
+        &self.0
+    }
+    pub fn into_payload(self) -> CollectRemovalCandidatesRequest {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<CollectRemovalCandidatesRequest> for CollectRemovalCandidates {
+    fn from(payload: CollectRemovalCandidatesRequest) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
 impl Configured {
     pub fn new(payload: ConfigureReceipt) -> Self {
         Self(payload)
@@ -348,6 +408,25 @@ impl Imported {
 #[rustfmt::skip]
 impl From<ImportReceipt> for Imported {
     fn from(payload: ImportReceipt) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl RemovalCandidatesCollected {
+    pub fn new(payload: RemovalCandidatesCollectedReceipt) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &RemovalCandidatesCollectedReceipt {
+        &self.0
+    }
+    pub fn into_payload(self) -> RemovalCandidatesCollectedReceipt {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<RemovalCandidatesCollectedReceipt> for RemovalCandidatesCollected {
+    fn from(payload: RemovalCandidatesCollectedReceipt) -> Self {
         Self::new(payload)
     }
 }
@@ -562,6 +641,25 @@ impl From<ImportedRecords> for ImportRequest {
 }
 
 #[rustfmt::skip]
+impl CollectRemovalCandidatesRequest {
+    pub fn new(payload: RemovalCandidateCollection) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &RemovalCandidateCollection {
+        &self.0
+    }
+    pub fn into_payload(self) -> RemovalCandidateCollection {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<RemovalCandidateCollection> for CollectRemovalCandidatesRequest {
+    fn from(payload: RemovalCandidateCollection) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
 impl ArchiveDatabaseTarget {
     pub fn path(payload: ArchivePathText) -> Self {
         Self::Path(ArchivePath::new(payload))
@@ -590,6 +688,9 @@ impl Input {
     pub fn import(payload: ImportRequest) -> Self {
         Self::Import(Import::new(payload))
     }
+    pub fn collect_removal_candidates(payload: CollectRemovalCandidatesRequest) -> Self {
+        Self::CollectRemovalCandidates(CollectRemovalCandidates::new(payload))
+    }
 }
 
 #[rustfmt::skip]
@@ -599,6 +700,11 @@ impl Output {
     }
     pub fn imported(payload: ImportReceipt) -> Self {
         Self::Imported(Imported::new(payload))
+    }
+    pub fn removal_candidates_collected(
+        payload: RemovalCandidatesCollectedReceipt,
+    ) -> Self {
+        Self::RemovalCandidatesCollected(RemovalCandidatesCollected::new(payload))
     }
     pub fn rejected(payload: ConfigureRejection) -> Self {
         Self::Rejected(Rejected::new(payload))
@@ -641,6 +747,13 @@ impl From<Import> for Input {
 }
 
 #[rustfmt::skip]
+impl From<CollectRemovalCandidates> for Input {
+    fn from(payload: CollectRemovalCandidates) -> Self {
+        Self::CollectRemovalCandidates(payload)
+    }
+}
+
+#[rustfmt::skip]
 impl From<Configured> for Output {
     fn from(payload: Configured) -> Self {
         Self::Configured(payload)
@@ -651,6 +764,13 @@ impl From<Configured> for Output {
 impl From<Imported> for Output {
     fn from(payload: Imported) -> Self {
         Self::Imported(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl From<RemovalCandidatesCollected> for Output {
+    fn from(payload: RemovalCandidatesCollected) -> Self {
+        Self::RemovalCandidatesCollected(payload)
     }
 }
 
@@ -697,9 +817,11 @@ impl std::fmt::Display for Output {
 pub mod short_header {
     pub const INPUT_CONFIGURE: u64 = 0x0000000000000000;
     pub const INPUT_IMPORT: u64 = 0x0001000000000000;
+    pub const INPUT_COLLECT_REMOVAL_CANDIDATES: u64 = 0x0002000000000000;
     pub const OUTPUT_CONFIGURED: u64 = 0x0100000000000000;
     pub const OUTPUT_IMPORTED: u64 = 0x0101000000000000;
-    pub const OUTPUT_REJECTED: u64 = 0x0102000000000000;
+    pub const OUTPUT_REMOVAL_CANDIDATES_COLLECTED: u64 = 0x0102000000000000;
+    pub const OUTPUT_REJECTED: u64 = 0x0103000000000000;
 }
 
 #[rustfmt::skip]
@@ -755,6 +877,7 @@ impl std::error::Error for SignalFrameError {}
 pub enum InputRoute {
     Configure,
     Import,
+    CollectRemovalCandidates,
 }
 
 #[rustfmt::skip]
@@ -775,6 +898,7 @@ pub enum InputRoute {
 pub enum OutputRoute {
     Configured,
     Imported,
+    RemovalCandidatesCollected,
     Rejected,
 }
 
@@ -784,18 +908,25 @@ impl Input {
         match self {
             Self::Configure(_) => InputRoute::Configure,
             Self::Import(_) => InputRoute::Import,
+            Self::CollectRemovalCandidates(_) => InputRoute::CollectRemovalCandidates,
         }
     }
     pub fn short_header(&self) -> u64 {
         match self {
             Self::Configure(_) => short_header::INPUT_CONFIGURE,
             Self::Import(_) => short_header::INPUT_IMPORT,
+            Self::CollectRemovalCandidates(_) => {
+                short_header::INPUT_COLLECT_REMOVAL_CANDIDATES
+            }
         }
     }
     pub fn route_from_short_header(header: u64) -> Result<InputRoute, SignalFrameError> {
         match header {
             short_header::INPUT_CONFIGURE => Ok(InputRoute::Configure),
             short_header::INPUT_IMPORT => Ok(InputRoute::Import),
+            short_header::INPUT_COLLECT_REMOVAL_CANDIDATES => {
+                Ok(InputRoute::CollectRemovalCandidates)
+            }
             _ => {
                 Err(SignalFrameError::UnknownHeader {
                     root_enum: "Input",
@@ -848,6 +979,9 @@ impl Output {
         match self {
             Self::Configured(_) => OutputRoute::Configured,
             Self::Imported(_) => OutputRoute::Imported,
+            Self::RemovalCandidatesCollected(_) => {
+                OutputRoute::RemovalCandidatesCollected
+            }
             Self::Rejected(_) => OutputRoute::Rejected,
         }
     }
@@ -855,6 +989,9 @@ impl Output {
         match self {
             Self::Configured(_) => short_header::OUTPUT_CONFIGURED,
             Self::Imported(_) => short_header::OUTPUT_IMPORTED,
+            Self::RemovalCandidatesCollected(_) => {
+                short_header::OUTPUT_REMOVAL_CANDIDATES_COLLECTED
+            }
             Self::Rejected(_) => short_header::OUTPUT_REJECTED,
         }
     }
@@ -864,6 +1001,9 @@ impl Output {
         match header {
             short_header::OUTPUT_CONFIGURED => Ok(OutputRoute::Configured),
             short_header::OUTPUT_IMPORTED => Ok(OutputRoute::Imported),
+            short_header::OUTPUT_REMOVAL_CANDIDATES_COLLECTED => {
+                Ok(OutputRoute::RemovalCandidatesCollected)
+            }
             short_header::OUTPUT_REJECTED => Ok(OutputRoute::Rejected),
             _ => {
                 Err(SignalFrameError::UnknownHeader {
@@ -915,7 +1055,11 @@ impl Output {
 impl signal_frame::RequestPayload for Input {}
 #[rustfmt::skip]
 impl signal_frame::SignalOperationHeads for Input {
-    const HEADS: &'static [&'static str] = &["Configure", "Import"];
+    const HEADS: &'static [&'static str] = &[
+        "Configure",
+        "Import",
+        "CollectRemovalCandidates",
+    ];
 }
 #[rustfmt::skip]
 impl signal_frame::LogVariant for Input {

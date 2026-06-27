@@ -3,14 +3,18 @@
   Entry signal-spirit:signal:Entry
   RecordIdentifier signal-spirit:signal:RecordIdentifier
   RecordCount signal-spirit:signal:RecordCount
+  RemovalCandidateCollection signal-spirit:signal:RemovalCandidateCollection
+  RemovalCandidatesCollection signal-spirit:signal:RemovalCandidatesCollection
 }
-[Configure Import]
-[Configured Imported Rejected]
+[Configure Import CollectRemovalCandidates]
+[Configured Imported RemovalCandidatesCollected Rejected]
 {
   Configure ConfigureRequest
   Import ImportRequest
+  CollectRemovalCandidates CollectRemovalCandidatesRequest
   Configured ConfigureReceipt
   Imported ImportReceipt
+  RemovalCandidatesCollected RemovalCandidatesCollectedReceipt
   Rejected ConfigureRejection
 
   ArchivePathText String
@@ -36,4 +40,7 @@
   ImportedRecords (Vec ImportedRecord)
   ImportRequest { ImportedRecords }
   ImportReceipt { RecordCount DatabaseMarker }
+
+  CollectRemovalCandidatesRequest { RemovalCandidateCollection }
+  RemovalCandidatesCollectedReceipt { RemovalCandidatesCollection DatabaseMarker }
 }
