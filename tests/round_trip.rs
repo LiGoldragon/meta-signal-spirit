@@ -2,8 +2,9 @@
 
 use meta_signal_spirit::{
     ArchiveDatabaseTarget, ConfigureReceipt, ConfigureRequest, CriomeGateTarget, CriomeSocketPath,
-    CriomeSocketPathText, ImportReceipt, ImportedRecords, Input, MirrorAddress, MirrorAddressText,
-    MirrorTarget, Output, RemovalCandidatesCollectedReceipt,
+    CriomeSocketPathText, HeadDigestHex, ImportReceipt, ImportedRecords, Input, MirrorAddress,
+    MirrorAddressText, MirrorTarget, Output, RemovalCandidatesCollectedReceipt, SelectedHeadDigest,
+    VersionedLogHead,
 };
 use nota::{NotaDecode, NotaEncode, NotaSource};
 use signal_frame::SignalOperationHeads;
@@ -134,8 +135,40 @@ fn meta_spirit_outputs_round_trip() {
 fn meta_spirit_request_variants_are_contract_local_verbs() {
     assert_eq!(
         Input::HEADS,
-        &["Configure", "Import", "CollectRemovalCandidates"]
+        &[
+            "Configure",
+            "Import",
+            "CollectRemovalCandidates",
+            "ObserveHead"
+        ]
     );
+}
+
+#[test]
+fn observe_head_input_round_trips() {
+    let input = Input::ObserveHead;
+    assert_eq!(round_trip_input(input.clone()), input);
+}
+
+#[test]
+fn head_observed_output_round_trips() {
+    // A seeded store reports a present content head: the 32-byte EntryDigest's
+    // lowercase-hex form (64 chars), the exact form the router-forward-witness
+    // ingests as `HEAD_DIGEST_HEX` and that criome's ObjectDigest also carries.
+    let present = Output::head_observed(VersionedLogHead {
+        database_marker: database_marker(),
+        selected_head_digest: SelectedHeadDigest::new(Some(HeadDigestHex::new(
+            "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a".to_owned(),
+        ))),
+    });
+    assert_eq!(round_trip_output(present.clone()), present);
+
+    // An empty store reports no head — the optional digest is the honest absence.
+    let absent = Output::head_observed(VersionedLogHead {
+        database_marker: database_marker(),
+        selected_head_digest: SelectedHeadDigest::new(None),
+    });
+    assert_eq!(round_trip_output(absent.clone()), absent);
 }
 
 #[test]
