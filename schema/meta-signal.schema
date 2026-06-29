@@ -6,8 +6,8 @@
   RemovalCandidateCollection signal-spirit:signal:RemovalCandidateCollection
   RemovalCandidatesCollection signal-spirit:signal:RemovalCandidatesCollection
 }
-[Configure Import CollectRemovalCandidates ObserveHead]
-[Configured Imported RemovalCandidatesCollected Rejected HeadObserved]
+[Configure Import CollectRemovalCandidates ObserveHead ObserveHeadObject]
+[Configured Imported RemovalCandidatesCollected Rejected HeadObserved HeadObjectObserved]
 {
   Configure ConfigureRequest
   Import ImportRequest
@@ -17,6 +17,7 @@
   RemovalCandidatesCollected RemovalCandidatesCollectedReceipt
   Rejected ConfigureRejection
   HeadObserved VersionedLogHead
+  HeadObjectObserved VersionedLogHeadObject
 
   ArchivePathText String
   ArchivePath { ArchivePathText }
@@ -48,4 +49,8 @@
   HeadDigestHex String
   SelectedHeadDigest (Optional HeadDigestHex)
   VersionedLogHead { DatabaseMarker SelectedHeadDigest }
+
+  HeadObjectHex String
+  SelectedHeadObject (Optional HeadObjectHex)
+  VersionedLogHeadObject { DatabaseMarker SelectedHeadObject }
 }

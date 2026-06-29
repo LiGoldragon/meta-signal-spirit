@@ -96,6 +96,14 @@ pub struct HeadObserved(VersionedLogHead);
     derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct HeadObjectObserved(VersionedLogHeadObject);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct ArchivePathText(String);
 
 #[rustfmt::skip]
@@ -333,11 +341,39 @@ pub struct VersionedLogHead {
     derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct HeadObjectHex(String);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct SelectedHeadObject(Option<HeadObjectHex>);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct VersionedLogHeadObject {
+    pub database_marker: DatabaseMarker,
+    pub selected_head_object: SelectedHeadObject,
+}
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub enum Input {
     Configure(Configure),
     Import(Import),
     CollectRemovalCandidates(CollectRemovalCandidates),
     ObserveHead,
+    ObserveHeadObject,
 }
 
 #[rustfmt::skip]
@@ -352,6 +388,7 @@ pub enum Output {
     RemovalCandidatesCollected(RemovalCandidatesCollected),
     Rejected(Rejected),
     HeadObserved(HeadObserved),
+    HeadObjectObserved(HeadObjectObserved),
 }
 
 #[rustfmt::skip]
@@ -502,6 +539,25 @@ impl HeadObserved {
 #[rustfmt::skip]
 impl From<VersionedLogHead> for HeadObserved {
     fn from(payload: VersionedLogHead) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl HeadObjectObserved {
+    pub fn new(payload: VersionedLogHeadObject) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &VersionedLogHeadObject {
+        &self.0
+    }
+    pub fn into_payload(self) -> VersionedLogHeadObject {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<VersionedLogHeadObject> for HeadObjectObserved {
+    fn from(payload: VersionedLogHeadObject) -> Self {
         Self::new(payload)
     }
 }
@@ -754,6 +810,44 @@ impl From<Option<HeadDigestHex>> for SelectedHeadDigest {
 }
 
 #[rustfmt::skip]
+impl HeadObjectHex {
+    pub fn new(payload: impl Into<String>) -> Self {
+        Self(payload.into())
+    }
+    pub fn payload(&self) -> &String {
+        &self.0
+    }
+    pub fn into_payload(self) -> String {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<String> for HeadObjectHex {
+    fn from(payload: String) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl SelectedHeadObject {
+    pub fn new(payload: Option<HeadObjectHex>) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &Option<HeadObjectHex> {
+        &self.0
+    }
+    pub fn into_payload(self) -> Option<HeadObjectHex> {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<Option<HeadObjectHex>> for SelectedHeadObject {
+    fn from(payload: Option<HeadObjectHex>) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
 impl ArchiveDatabaseTarget {
     pub fn path(payload: ArchivePathText) -> Self {
         Self::Path(ArchivePath::new(payload))
@@ -805,6 +899,9 @@ impl Output {
     }
     pub fn head_observed(payload: VersionedLogHead) -> Self {
         Self::HeadObserved(HeadObserved::new(payload))
+    }
+    pub fn head_object_observed(payload: VersionedLogHeadObject) -> Self {
+        Self::HeadObjectObserved(HeadObjectObserved::new(payload))
     }
 }
 
@@ -886,6 +983,13 @@ impl From<HeadObserved> for Output {
 }
 
 #[rustfmt::skip]
+impl From<HeadObjectObserved> for Output {
+    fn from(payload: HeadObjectObserved) -> Self {
+        Self::HeadObjectObserved(payload)
+    }
+}
+
+#[rustfmt::skip]
 #[cfg(feature = "nota-text")]
 impl std::str::FromStr for Input {
     type Err = NotaDecodeError;
@@ -923,11 +1027,13 @@ pub mod short_header {
     pub const INPUT_IMPORT: u64 = 0x0001000000000000;
     pub const INPUT_COLLECT_REMOVAL_CANDIDATES: u64 = 0x0002000000000000;
     pub const INPUT_OBSERVE_HEAD: u64 = 0x0003000000000000;
+    pub const INPUT_OBSERVE_HEAD_OBJECT: u64 = 0x0004000000000000;
     pub const OUTPUT_CONFIGURED: u64 = 0x0100000000000000;
     pub const OUTPUT_IMPORTED: u64 = 0x0101000000000000;
     pub const OUTPUT_REMOVAL_CANDIDATES_COLLECTED: u64 = 0x0102000000000000;
     pub const OUTPUT_REJECTED: u64 = 0x0103000000000000;
     pub const OUTPUT_HEAD_OBSERVED: u64 = 0x0104000000000000;
+    pub const OUTPUT_HEAD_OBJECT_OBSERVED: u64 = 0x0105000000000000;
 }
 
 #[rustfmt::skip]
@@ -985,6 +1091,7 @@ pub enum InputRoute {
     Import,
     CollectRemovalCandidates,
     ObserveHead,
+    ObserveHeadObject,
 }
 
 #[rustfmt::skip]
@@ -1008,6 +1115,7 @@ pub enum OutputRoute {
     RemovalCandidatesCollected,
     Rejected,
     HeadObserved,
+    HeadObjectObserved,
 }
 
 #[rustfmt::skip]
@@ -1018,6 +1126,7 @@ impl Input {
             Self::Import(_) => InputRoute::Import,
             Self::CollectRemovalCandidates(_) => InputRoute::CollectRemovalCandidates,
             Self::ObserveHead => InputRoute::ObserveHead,
+            Self::ObserveHeadObject => InputRoute::ObserveHeadObject,
         }
     }
     pub fn short_header(&self) -> u64 {
@@ -1028,6 +1137,7 @@ impl Input {
                 short_header::INPUT_COLLECT_REMOVAL_CANDIDATES
             }
             Self::ObserveHead => short_header::INPUT_OBSERVE_HEAD,
+            Self::ObserveHeadObject => short_header::INPUT_OBSERVE_HEAD_OBJECT,
         }
     }
     pub fn route_from_short_header(header: u64) -> Result<InputRoute, SignalFrameError> {
@@ -1038,6 +1148,7 @@ impl Input {
                 Ok(InputRoute::CollectRemovalCandidates)
             }
             short_header::INPUT_OBSERVE_HEAD => Ok(InputRoute::ObserveHead),
+            short_header::INPUT_OBSERVE_HEAD_OBJECT => Ok(InputRoute::ObserveHeadObject),
             _ => {
                 Err(SignalFrameError::UnknownHeader {
                     root_enum: "Input",
@@ -1095,6 +1206,7 @@ impl Output {
             }
             Self::Rejected(_) => OutputRoute::Rejected,
             Self::HeadObserved(_) => OutputRoute::HeadObserved,
+            Self::HeadObjectObserved(_) => OutputRoute::HeadObjectObserved,
         }
     }
     pub fn short_header(&self) -> u64 {
@@ -1106,6 +1218,7 @@ impl Output {
             }
             Self::Rejected(_) => short_header::OUTPUT_REJECTED,
             Self::HeadObserved(_) => short_header::OUTPUT_HEAD_OBSERVED,
+            Self::HeadObjectObserved(_) => short_header::OUTPUT_HEAD_OBJECT_OBSERVED,
         }
     }
     pub fn route_from_short_header(
@@ -1119,6 +1232,9 @@ impl Output {
             }
             short_header::OUTPUT_REJECTED => Ok(OutputRoute::Rejected),
             short_header::OUTPUT_HEAD_OBSERVED => Ok(OutputRoute::HeadObserved),
+            short_header::OUTPUT_HEAD_OBJECT_OBSERVED => {
+                Ok(OutputRoute::HeadObjectObserved)
+            }
             _ => {
                 Err(SignalFrameError::UnknownHeader {
                     root_enum: "Output",
@@ -1174,6 +1290,7 @@ impl signal_frame::SignalOperationHeads for Input {
         "Import",
         "CollectRemovalCandidates",
         "ObserveHead",
+        "ObserveHeadObject",
     ];
 }
 #[rustfmt::skip]
