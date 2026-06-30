@@ -185,6 +185,33 @@ pub enum CriomeGateTarget {
     derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct GuardianPromptText(String);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct GuardianPrompt(GuardianPromptText);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub enum GuardianPromptTarget {
+    Default,
+    Prompt(GuardianPrompt),
+}
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct SelectedMirrorTarget(Option<MirrorTarget>);
 
 #[rustfmt::skip]
@@ -201,10 +228,19 @@ pub struct SelectedCriomeGateTarget(Option<CriomeGateTarget>);
     derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct SelectedGuardianPromptTarget(Option<GuardianPromptTarget>);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct ConfigureRequest {
     pub archive_database_target: ArchiveDatabaseTarget,
     pub selected_mirror_target: SelectedMirrorTarget,
     pub selected_criome_gate_target: SelectedCriomeGateTarget,
+    pub selected_guardian_prompt_target: SelectedGuardianPromptTarget,
 }
 
 #[rustfmt::skip]
@@ -217,6 +253,7 @@ pub struct ConfigureReceipt {
     pub archive_database_target: ArchiveDatabaseTarget,
     pub selected_mirror_target: SelectedMirrorTarget,
     pub selected_criome_gate_target: SelectedCriomeGateTarget,
+    pub selected_guardian_prompt_target: SelectedGuardianPromptTarget,
     pub database_marker: DatabaseMarker,
 }
 
@@ -677,6 +714,44 @@ impl From<CriomeSocketPathText> for CriomeSocketPath {
 }
 
 #[rustfmt::skip]
+impl GuardianPromptText {
+    pub fn new(payload: impl Into<String>) -> Self {
+        Self(payload.into())
+    }
+    pub fn payload(&self) -> &String {
+        &self.0
+    }
+    pub fn into_payload(self) -> String {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<String> for GuardianPromptText {
+    fn from(payload: String) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl GuardianPrompt {
+    pub fn new(payload: GuardianPromptText) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &GuardianPromptText {
+        &self.0
+    }
+    pub fn into_payload(self) -> GuardianPromptText {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<GuardianPromptText> for GuardianPrompt {
+    fn from(payload: GuardianPromptText) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
 impl SelectedMirrorTarget {
     pub fn new(payload: Option<MirrorTarget>) -> Self {
         Self(payload)
@@ -710,6 +785,25 @@ impl SelectedCriomeGateTarget {
 #[rustfmt::skip]
 impl From<Option<CriomeGateTarget>> for SelectedCriomeGateTarget {
     fn from(payload: Option<CriomeGateTarget>) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl SelectedGuardianPromptTarget {
+    pub fn new(payload: Option<GuardianPromptTarget>) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &Option<GuardianPromptTarget> {
+        &self.0
+    }
+    pub fn into_payload(self) -> Option<GuardianPromptTarget> {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<Option<GuardianPromptTarget>> for SelectedGuardianPromptTarget {
+    fn from(payload: Option<GuardianPromptTarget>) -> Self {
         Self::new(payload)
     }
 }
@@ -869,6 +963,13 @@ impl CriomeGateTarget {
 }
 
 #[rustfmt::skip]
+impl GuardianPromptTarget {
+    pub fn prompt(payload: GuardianPromptText) -> Self {
+        Self::Prompt(GuardianPrompt::new(payload))
+    }
+}
+
+#[rustfmt::skip]
 impl Input {
     pub fn configure(payload: ConfigureRequest) -> Self {
         Self::Configure(Configure::new(payload))
@@ -923,6 +1024,13 @@ impl From<MirrorAddress> for MirrorTarget {
 impl From<CriomeSocketPath> for CriomeGateTarget {
     fn from(payload: CriomeSocketPath) -> Self {
         Self::Socket(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl From<GuardianPrompt> for GuardianPromptTarget {
+    fn from(payload: GuardianPrompt) -> Self {
+        Self::Prompt(payload)
     }
 }
 

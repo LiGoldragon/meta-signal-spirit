@@ -32,8 +32,20 @@ also retired. The live contract is schema-derived and carries the owner-only
 
 | Request | Meaning |
 |---|---|
-| `Configure(ConfigureRequest)` | Set the archive database target used by owner-controlled archival policy. |
+| `Configure(ConfigureRequest)` | Set the owner-controlled runtime policy targets: the archive database target, the optional mirror target, the optional local-criome gate target, and the optional guardian-prompt target. |
 | `Import(ImportRequest)` | Restore pre-vetted records with stable identifiers, bypassing ordinary guardian admission by owner authority. |
+
+`ConfigureRequest` and `ConfigureReceipt` each carry an optional
+`SelectedGuardianPromptTarget`. `GuardianPromptTarget::Default` keeps the
+daemon's compiled-in guardian role prompt; `GuardianPromptTarget::Prompt`
+carries an owner-supplied role-section override that the daemon applies to the
+live guardian without a rebuild. An absent target leaves the live guardian's
+current prompt unchanged. The override is owner runtime policy, not durable
+state: like the other Configure targets it lives in the running daemon and falls
+back to the compiled-in default on restart until an owner re-sends it. The
+closed rejection-reason catalogue and the NOTA verdict grammar stay
+daemon-code-rendered from the wire enums, so a prompt override can never shift
+the verdict vocabulary the daemon parses.
 
 The wire form carries contract-local verbs only. Sema class labels are
 daemon-side projections.

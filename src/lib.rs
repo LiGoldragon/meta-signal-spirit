@@ -23,11 +23,15 @@ impl ConfigureRequest {
         archive_database_target: ArchiveDatabaseTarget,
         mirror_target: Option<MirrorTarget>,
         criome_gate_target: Option<CriomeGateTarget>,
+        guardian_prompt_target: Option<GuardianPromptTarget>,
     ) -> Self {
         Self {
             archive_database_target,
             selected_mirror_target: SelectedMirrorTarget::new(mirror_target),
             selected_criome_gate_target: SelectedCriomeGateTarget::new(criome_gate_target),
+            selected_guardian_prompt_target: SelectedGuardianPromptTarget::new(
+                guardian_prompt_target,
+            ),
         }
     }
 
@@ -38,6 +42,10 @@ impl ConfigureRequest {
     pub fn criome_gate_target(&self) -> Option<&CriomeGateTarget> {
         self.selected_criome_gate_target.payload().as_ref()
     }
+
+    pub fn guardian_prompt_target(&self) -> Option<&GuardianPromptTarget> {
+        self.selected_guardian_prompt_target.payload().as_ref()
+    }
 }
 
 impl ConfigureReceipt {
@@ -45,12 +53,16 @@ impl ConfigureReceipt {
         archive_database_target: ArchiveDatabaseTarget,
         mirror_target: Option<MirrorTarget>,
         criome_gate_target: Option<CriomeGateTarget>,
+        guardian_prompt_target: Option<GuardianPromptTarget>,
         database_marker: signal_spirit::DatabaseMarker,
     ) -> Self {
         Self {
             archive_database_target,
             selected_mirror_target: SelectedMirrorTarget::new(mirror_target),
             selected_criome_gate_target: SelectedCriomeGateTarget::new(criome_gate_target),
+            selected_guardian_prompt_target: SelectedGuardianPromptTarget::new(
+                guardian_prompt_target,
+            ),
             database_marker,
         }
     }
@@ -61,5 +73,9 @@ impl ConfigureReceipt {
 
     pub fn criome_gate_target(&self) -> Option<&CriomeGateTarget> {
         self.selected_criome_gate_target.payload().as_ref()
+    }
+
+    pub fn guardian_prompt_target(&self) -> Option<&GuardianPromptTarget> {
+        self.selected_guardian_prompt_target.payload().as_ref()
     }
 }

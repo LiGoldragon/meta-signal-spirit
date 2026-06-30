@@ -31,10 +31,15 @@
   CriomeSocketPath { CriomeSocketPathText }
   CriomeGateTarget [Default (Socket CriomeSocketPath)]
 
+  GuardianPromptText String
+  GuardianPrompt { GuardianPromptText }
+  GuardianPromptTarget [Default (Prompt GuardianPrompt)]
+
   SelectedMirrorTarget (Optional MirrorTarget)
   SelectedCriomeGateTarget (Optional CriomeGateTarget)
-  ConfigureRequest { ArchiveDatabaseTarget SelectedMirrorTarget SelectedCriomeGateTarget }
-  ConfigureReceipt { ArchiveDatabaseTarget SelectedMirrorTarget SelectedCriomeGateTarget DatabaseMarker }
+  SelectedGuardianPromptTarget (Optional GuardianPromptTarget)
+  ConfigureRequest { ArchiveDatabaseTarget SelectedMirrorTarget SelectedCriomeGateTarget SelectedGuardianPromptTarget }
+  ConfigureReceipt { ArchiveDatabaseTarget SelectedMirrorTarget SelectedCriomeGateTarget SelectedGuardianPromptTarget DatabaseMarker }
   ConfigureRejection { ConfigureRejectionReason DatabaseMarker }
   ConfigureRejectionReason [ArchiveTargetUnwritable InternalError]
 

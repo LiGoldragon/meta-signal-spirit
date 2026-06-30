@@ -2,9 +2,9 @@
 
 use meta_signal_spirit::{
     ArchiveDatabaseTarget, ConfigureReceipt, ConfigureRequest, CriomeGateTarget, CriomeSocketPath,
-    CriomeSocketPathText, HeadDigestHex, ImportReceipt, ImportedRecords, Input, MirrorAddress,
-    MirrorAddressText, MirrorTarget, Output, RemovalCandidatesCollectedReceipt, SelectedHeadDigest,
-    VersionedLogHead,
+    CriomeSocketPathText, GuardianPrompt, GuardianPromptTarget, GuardianPromptText, HeadDigestHex,
+    ImportReceipt, ImportedRecords, Input, MirrorAddress, MirrorAddressText, MirrorTarget, Output,
+    RemovalCandidatesCollectedReceipt, SelectedHeadDigest, VersionedLogHead,
 };
 use nota::{NotaDecode, NotaEncode, NotaSource};
 use signal_frame::SignalOperationHeads;
@@ -91,6 +91,7 @@ fn meta_spirit_inputs_round_trip() {
             archive_database_target: ArchiveDatabaseTarget::Default,
             selected_mirror_target: None.into(),
             selected_criome_gate_target: None.into(),
+            selected_guardian_prompt_target: None.into(),
         }),
         Input::configure(ConfigureRequest {
             archive_database_target: ArchiveDatabaseTarget::Default,
@@ -100,6 +101,10 @@ fn meta_spirit_inputs_round_trip() {
             .into(),
             selected_criome_gate_target: Some(CriomeGateTarget::Socket(CriomeSocketPath::new(
                 CriomeSocketPathText::new("/run/user/1001/criome.sock"),
+            )))
+            .into(),
+            selected_guardian_prompt_target: Some(GuardianPromptTarget::Prompt(GuardianPrompt::new(
+                GuardianPromptText::new("You are the Guardian of Spirit. Default to refusal."),
             )))
             .into(),
         }),
@@ -118,6 +123,7 @@ fn meta_spirit_outputs_round_trip() {
             archive_database_target: ArchiveDatabaseTarget::Default,
             selected_mirror_target: None.into(),
             selected_criome_gate_target: None.into(),
+            selected_guardian_prompt_target: None.into(),
             database_marker: database_marker(),
         }),
         Output::imported(ImportReceipt {
@@ -139,7 +145,8 @@ fn meta_spirit_request_variants_are_contract_local_verbs() {
             "Configure",
             "Import",
             "CollectRemovalCandidates",
-            "ObserveHead"
+            "ObserveHead",
+            "ObserveHeadObject"
         ]
     );
 }
@@ -190,8 +197,9 @@ fn meta_spirit_canonical_examples_round_trip() {
             archive_database_target: ArchiveDatabaseTarget::Default,
             selected_mirror_target: None.into(),
             selected_criome_gate_target: None.into(),
+            selected_guardian_prompt_target: None.into(),
         }),
-        "(Configure (Default None None))",
+        "(Configure (Default None None None))",
     );
     round_trip_nota(
         Input::configure(ConfigureRequest {
@@ -204,8 +212,12 @@ fn meta_spirit_canonical_examples_round_trip() {
                 CriomeSocketPathText::new("/run/user/1001/criome.sock"),
             )))
             .into(),
+            selected_guardian_prompt_target: Some(GuardianPromptTarget::Prompt(GuardianPrompt::new(
+                GuardianPromptText::new("You are the Guardian of Spirit. Default to refusal."),
+            )))
+            .into(),
         }),
-        "(Configure (Default (Some (Address 100.64.0.7:7777)) (Some (Socket /run/user/1001/criome.sock))))",
+        "(Configure (Default (Some (Address 100.64.0.7:7777)) (Some (Socket /run/user/1001/criome.sock)) (Some (Prompt [You are the Guardian of Spirit. Default to refusal.]))))",
     );
     round_trip_nota(
         Input::import(ImportedRecords::new(Vec::new()).into()),
@@ -216,9 +228,10 @@ fn meta_spirit_canonical_examples_round_trip() {
             archive_database_target: ArchiveDatabaseTarget::Default,
             selected_mirror_target: None.into(),
             selected_criome_gate_target: None.into(),
+            selected_guardian_prompt_target: None.into(),
             database_marker: database_marker(),
         }),
-        "(Configured (Default None None (1 2)))",
+        "(Configured (Default None None None (1 2)))",
     );
 }
 

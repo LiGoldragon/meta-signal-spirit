@@ -6,6 +6,7 @@ fn default_build_round_trips_meta_request_without_nota_text() {
         ArchiveDatabaseTarget::Default,
         None,
         None,
+        None,
     ));
 
     let bytes = request.encode_signal_frame().expect("encode request");
