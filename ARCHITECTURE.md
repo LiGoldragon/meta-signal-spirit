@@ -2,6 +2,10 @@
 
 *MetaSignal contract for privileged Spirit lifecycle and policy.*
 
+## 0.5 · Direction
+
+`meta-signal-spirit` is the owner-only policy Signal contract for `spirit`. Ordinary psyche statements, intent observations, clarification questions, and subscriptions live in `signal-spirit`; this crate carries the owner operations that ordinary peers must not hold: `Configure` (sets archive target, mirror target, local-criome gate target, and optional guardian-prompt target) and `Import` (restores pre-vetted records with stable identifiers under owner authority). Sema vocabulary is daemon-side observation classification only and must not be the public request spine.
+
 ## Role
 
 `meta-signal-spirit` is the meta-policy Signal surface for
