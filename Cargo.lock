@@ -521,7 +521,7 @@ dependencies = [
 [[package]]
 name = "schema-rust"
 version = "0.5.3"
-source = "git+https://github.com/LiGoldragon/schema-rust.git?branch=drop-next#67b91f5a6a70eced5854f27c7af8b39ace7e2d88"
+source = "git+https://github.com/LiGoldragon/schema-rust.git?branch=drop-next#72c71ffc558fee0d29c5b0517013de46e0307597"
 dependencies = [
  "nota",
  "prettyplease",
@@ -594,7 +594,7 @@ dependencies = [
 [[package]]
 name = "signal-spirit"
 version = "0.9.0"
-source = "git+https://github.com/LiGoldragon/signal-spirit.git?branch=drop-next#c123651d04caac7bfde972ef5d48fb860b275431"
+source = "git+https://github.com/LiGoldragon/signal-spirit.git?branch=drop-next#e7d77c205cc5c053b8d268b10aa4c3f44f7ec639"
 dependencies = [
  "nota",
  "rkyv",
