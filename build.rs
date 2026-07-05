@@ -24,13 +24,13 @@ impl SchemaBuild {
         println!("cargo:rerun-if-changed=src/schema/meta_signal.rs");
 
         let Some(signal_spirit) =
-            DependencySchema::from_cargo_metadata("signal-spirit", "signal-spirit", "0.6.0")
+            DependencySchema::from_cargo_metadata("signal-spirit", "signal-spirit", "0.10.0")
                 .expect("read signal-spirit schema metadata")
         else {
             return;
         };
 
-        let plan = GenerationPlan::new(&self.crate_root, "meta-signal-spirit", "0.2.0")
+        let plan = GenerationPlan::new(&self.crate_root, "meta-signal-spirit", "0.6.0")
             .with_dependency_schema(signal_spirit)
             .with_module(ModuleEmission::wire_contract_module("meta-signal"));
 

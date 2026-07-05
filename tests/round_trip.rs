@@ -103,9 +103,11 @@ fn meta_spirit_inputs_round_trip() {
                 CriomeSocketPathText::new("/run/user/1001/criome.sock"),
             )))
             .into(),
-            selected_guardian_prompt_target: Some(GuardianPromptTarget::Prompt(GuardianPrompt::new(
-                GuardianPromptText::new("You are the Guardian of Spirit. Default to refusal."),
-            )))
+            selected_guardian_prompt_target: Some(GuardianPromptTarget::Prompt(
+                GuardianPrompt::new(GuardianPromptText::new(
+                    "You are the Guardian of Spirit. Default to refusal.",
+                )),
+            ))
             .into(),
         }),
         Input::import(ImportedRecords::new(Vec::new()).into()),
@@ -212,9 +214,11 @@ fn meta_spirit_canonical_examples_round_trip() {
                 CriomeSocketPathText::new("/run/user/1001/criome.sock"),
             )))
             .into(),
-            selected_guardian_prompt_target: Some(GuardianPromptTarget::Prompt(GuardianPrompt::new(
-                GuardianPromptText::new("You are the Guardian of Spirit. Default to refusal."),
-            )))
+            selected_guardian_prompt_target: Some(GuardianPromptTarget::Prompt(
+                GuardianPrompt::new(GuardianPromptText::new(
+                    "You are the Guardian of Spirit. Default to refusal.",
+                )),
+            ))
             .into(),
         }),
         "(Configure (Default (Some (Address 100.64.0.7:7777)) (Some (Socket /run/user/1001/criome.sock)) (Some (Prompt [You are the Guardian of Spirit. Default to refusal.]))))",

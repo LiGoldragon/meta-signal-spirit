@@ -1,6 +1,6 @@
 [package]
 name         = "meta-signal-spirit"
-version      = "0.5.0"
+version      = "0.6.0"
 edition      = "2024"
 rust-version = "1.89"
 license      = "MIT OR Apache-2.0"
@@ -20,16 +20,16 @@ nota-text = ["dep:nota", "signal-frame/nota-text", "signal-spirit/nota-text"]
 
 [dependencies]
 signal-frame  = { git = "https://github.com/LiGoldragon/signal-frame.git", branch = "main", default-features = false }
-signal-spirit = { git = "https://github.com/LiGoldragon/signal-spirit.git", branch = "main", default-features = false }
-nota     = { package = "nota", git = "https://github.com/LiGoldragon/nota-next.git", branch = "main", optional = true }
+signal-spirit = { git = "https://github.com/LiGoldragon/signal-spirit.git", rev = "c8dd7320458ebc0a29f158e7542f143a986cd536", default-features = false }
+nota     = { package = "nota", git = "https://github.com/LiGoldragon/nota.git", branch = "main", optional = true }
 rkyv          = { version = "0.8", default-features = false, features = ["std", "bytecheck", "little_endian", "pointer_width_32", "unaligned"] }
 thiserror     = "2"
 
 [build-dependencies]
-schema-rust = { package = "schema-rust", git = "https://github.com/LiGoldragon/schema-rust-next.git", branch = "main" }
+schema-rust = { package = "schema-rust", git = "https://github.com/LiGoldragon/schema-rust.git", rev = "31aad1dc494c24a4390234842f15a93afe666dee" }
 
 [dev-dependencies]
-nota = { package = "nota", git = "https://github.com/LiGoldragon/nota-next.git", branch = "main" }
+nota = { package = "nota", git = "https://github.com/LiGoldragon/nota.git", branch = "main" }
 
 [lints.rust]
 unsafe_code = "forbid"
