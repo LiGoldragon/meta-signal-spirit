@@ -27,7 +27,7 @@ impl SchemaBuild {
             DependencySchema::from_cargo_metadata("signal-domain", "signal-domain", "0.1.0")
                 .expect("read signal-domain schema metadata");
         let Some(signal_spirit) =
-            DependencySchema::from_cargo_metadata("signal-spirit", "signal-spirit", "0.11.0")
+            DependencySchema::from_cargo_metadata("signal-spirit", "signal-spirit", "0.12.0")
                 .expect("read signal-spirit schema metadata")
         else {
             return;

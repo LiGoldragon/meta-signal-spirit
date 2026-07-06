@@ -21,7 +21,7 @@ nota-text = ["dep:nota", "signal-domain/nota-text", "signal-frame/nota-text", "s
 [dependencies]
 signal-domain = { git = "https://github.com/LiGoldragon/signal-domain.git", branch = "main", default-features = false }
 signal-frame  = { git = "https://github.com/LiGoldragon/signal-frame.git", branch = "main", default-features = false }
-signal-spirit = { git = "https://github.com/LiGoldragon/signal-spirit.git", rev = "982e40465fd99f7bb3da237b4300760f4c89076a", default-features = false }
+signal-spirit = { git = "https://github.com/LiGoldragon/signal-spirit.git", rev = "d06e8efffa0ad9cc5305c53977f9833dec3c6038", default-features = false }
 nota     = { package = "nota", git = "https://github.com/LiGoldragon/nota.git", branch = "main", optional = true }
 rkyv          = { version = "0.8", default-features = false, features = ["std", "bytecheck", "little_endian", "pointer_width_32", "unaligned"] }
 thiserror     = "2"

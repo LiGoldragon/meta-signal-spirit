@@ -69,7 +69,7 @@ daemon-side projections.
 schema/meta-signal.schema — source-of-truth meta policy schema
 src/schema/meta_signal.rs — generated meta request/reply records and codecs
 src/lib.rs              — generated contract re-exports
-examples/canonical.nota — meta request/reply examples
+examples/canonical.nota — meta request/reply examples plus the ordinary signal-spirit `PublicIntent` dependency witness
 tests/round_trip.rs     — rkyv frame + NOTA + verb mapping witnesses
 tests/frame.rs          — default-feature rkyv frame witness
 tests/dependency_boundary.rs — default binary-only dependency witness

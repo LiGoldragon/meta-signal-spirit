@@ -10,10 +10,11 @@ use nota::{NotaDecode, NotaEncode, NotaSource};
 use signal_frame::SignalOperationHeads;
 use signal_spirit::schema::signal::{
     CertaintySelection, CommitSequence, DatabaseMarker, Domain, DomainMatch, DomainScope,
-    DomainScopes, ImportanceSelection, Justification, KeywordMatch, PrivacySelection, Query,
-    Reasoning, RecordCount, RecordQuery, ReferentSelection, RemovalArchiveRecords,
-    RemovalCandidateCollection, RemovalCandidatesCollection, RemovedIdentifiers, SelectedKind,
-    SkippedRemovalCandidates, StateDigest, TextMatch,
+    DomainScopes, ImportanceSelection, Input as SpiritInput, InputRoute as SpiritInputRoute,
+    Justification, KeywordMatch, OperationKind, PrivacySelection, Query, Reasoning, RecordCount,
+    RecordQuery, ReferentSelection, RemovalArchiveRecords, RemovalCandidateCollection,
+    RemovalCandidatesCollection, RemovedIdentifiers, SelectedKind, SkippedRemovalCandidates,
+    StateDigest, TextMatch,
 };
 
 const CANONICAL: &str = include_str!("../examples/canonical.nota");
@@ -44,12 +45,14 @@ fn removal_candidate_collection() -> RemovalCandidateCollection {
     }
 }
 
+fn universal_domain_scopes() -> DomainScopes {
+    DomainScopes::new(vec![DomainScope::from(Domain::All)])
+}
+
 fn universal_domain_removal_candidate_collection() -> RemovalCandidateCollection {
     RemovalCandidateCollection {
         record_query: RecordQuery::new(Query {
-            domain_match: DomainMatch::partial(DomainScopes::new(vec![DomainScope::from(
-                Domain::All,
-            )])),
+            domain_match: DomainMatch::partial(universal_domain_scopes()),
             keyword_match: KeywordMatch::Any,
             text_match: TextMatch::Any,
             referent_selection: ReferentSelection::Any,
@@ -86,6 +89,11 @@ fn round_trip_output(output: Output) -> Output {
     let frame = output.encode_signal_frame().expect("encode output");
     let (_route, decoded) = Output::decode_signal_frame(&frame).expect("decode output");
     decoded
+}
+
+fn round_trip_spirit_input(input: SpiritInput) -> (SpiritInputRoute, SpiritInput) {
+    let frame = input.encode_signal_frame().expect("encode spirit input");
+    SpiritInput::decode_signal_frame(&frame).expect("decode spirit input")
 }
 
 fn round_trip_nota<Value>(value: Value, expected: &str)
@@ -208,6 +216,19 @@ fn collect_removal_candidates_input_round_trips() {
 }
 
 #[test]
+fn public_intent_spirit_input_round_trips_from_dependency_contract() {
+    let input = SpiritInput::public_intent(universal_domain_scopes());
+    let (route, decoded) = round_trip_spirit_input(input.clone());
+
+    assert_eq!(route, SpiritInputRoute::PublicIntent);
+    assert_eq!(decoded, input);
+    assert_eq!(
+        OperationKind::from_input(&input),
+        OperationKind::PublicIntent
+    );
+}
+
+#[test]
 fn collect_removal_candidates_with_domain_all_round_trips() {
     let input =
         Input::collect_removal_candidates(universal_domain_removal_candidate_collection().into());
@@ -269,6 +290,10 @@ fn meta_spirit_canonical_examples_round_trip() {
 
 #[test]
 fn collect_removal_candidates_canonical_examples_round_trip() {
+    round_trip_nota(
+        SpiritInput::public_intent(universal_domain_scopes()),
+        "(PublicIntent [All])",
+    );
     round_trip_nota(
         Input::collect_removal_candidates(removal_candidate_collection().into()),
         "(CollectRemovalCandidates ((Any Any Any Any None Any Any Any) ([] [retire the matching candidates])))",

@@ -1,16 +1,19 @@
 use meta_signal_spirit::{ArchiveDatabaseTarget, ConfigureRequest, Input};
 use signal_spirit::{
     CertaintySelection, Domain, DomainMatch, DomainScope, DomainScopes, ImportanceSelection,
-    Justification, KeywordMatch, PrivacySelection, Query, Reasoning, RecordQuery,
-    ReferentSelection, RemovalCandidateCollection, SelectedKind, TextMatch,
+    Input as SpiritInput, InputRoute as SpiritInputRoute, Justification, KeywordMatch,
+    OperationKind, PrivacySelection, Query, Reasoning, RecordQuery, ReferentSelection,
+    RemovalCandidateCollection, SelectedKind, TextMatch,
 };
+
+fn universal_domain_scopes() -> DomainScopes {
+    DomainScopes::new(vec![DomainScope::from(Domain::All)])
+}
 
 fn universal_domain_removal_candidate_collection() -> RemovalCandidateCollection {
     RemovalCandidateCollection {
         record_query: RecordQuery::new(Query {
-            domain_match: DomainMatch::partial(DomainScopes::new(vec![DomainScope::from(
-                Domain::All,
-            )])),
+            domain_match: DomainMatch::partial(universal_domain_scopes()),
             keyword_match: KeywordMatch::Any,
             text_match: TextMatch::Any,
             referent_selection: ReferentSelection::Any,
@@ -50,4 +53,19 @@ fn default_build_round_trips_domain_all_imported_query_without_nota_text() {
     let (_route, decoded) = Input::decode_signal_frame(&bytes).expect("decode request");
 
     assert_eq!(decoded, request);
+}
+
+#[test]
+fn default_build_round_trips_public_intent_dependency_without_nota_text() {
+    let request = SpiritInput::public_intent(universal_domain_scopes());
+
+    let bytes = request.encode_signal_frame().expect("encode request");
+    let (route, decoded) = SpiritInput::decode_signal_frame(&bytes).expect("decode request");
+
+    assert_eq!(route, SpiritInputRoute::PublicIntent);
+    assert_eq!(decoded, request);
+    assert_eq!(
+        OperationKind::from_input(&request),
+        OperationKind::PublicIntent
+    );
 }

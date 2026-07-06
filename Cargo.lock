@@ -605,8 +605,8 @@ dependencies = [
 
 [[package]]
 name = "signal-spirit"
-version = "0.11.0"
-source = "git+https://github.com/LiGoldragon/signal-spirit.git?rev=982e40465fd99f7bb3da237b4300760f4c89076a#982e40465fd99f7bb3da237b4300760f4c89076a"
+version = "0.12.0"
+source = "git+https://github.com/LiGoldragon/signal-spirit.git?rev=d06e8efffa0ad9cc5305c53977f9833dec3c6038#d06e8efffa0ad9cc5305c53977f9833dec3c6038"
 dependencies = [
  "nota",
  "rkyv",

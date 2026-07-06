@@ -1,6 +1,7 @@
 (Configure (Default None None None))
 (Configure (Default (Some (Address 100.64.0.7:7777)) (Some (Socket /run/user/1001/criome.sock)) (Some (Prompt [You are the Guardian of Spirit. Default to refusal.]))))
 (Import [])
+(PublicIntent [All])
 (CollectRemovalCandidates ((Any Any Any Any None Any Any Any) ([] [retire the matching candidates])))
 (CollectRemovalCandidates (((Partial [All]) Any Any Any None Any Any Any) ([] [retire universal-domain matching candidates])))
 (Configured (Default None None None (1 2)))
