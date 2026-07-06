@@ -9,11 +9,11 @@ use meta_signal_spirit::{
 use nota::{NotaDecode, NotaEncode, NotaSource};
 use signal_frame::SignalOperationHeads;
 use signal_spirit::schema::signal::{
-    CertaintySelection, CommitSequence, DatabaseMarker, DomainMatch, ImportanceSelection,
-    Justification, KeywordMatch, PrivacySelection, Query, Reasoning, RecordCount, RecordQuery,
-    ReferentSelection, RemovalArchiveRecords, RemovalCandidateCollection,
-    RemovalCandidatesCollection, RemovedIdentifiers, SelectedKind, SkippedRemovalCandidates,
-    StateDigest, TextMatch,
+    CertaintySelection, CommitSequence, DatabaseMarker, Domain, DomainMatch, DomainScope,
+    DomainScopes, ImportanceSelection, Justification, KeywordMatch, PrivacySelection, Query,
+    Reasoning, RecordCount, RecordQuery, ReferentSelection, RemovalArchiveRecords,
+    RemovalCandidateCollection, RemovalCandidatesCollection, RemovedIdentifiers, SelectedKind,
+    SkippedRemovalCandidates, StateDigest, TextMatch,
 };
 
 const CANONICAL: &str = include_str!("../examples/canonical.nota");
@@ -40,6 +40,27 @@ fn removal_candidate_collection() -> RemovalCandidateCollection {
         justification: Justification {
             testimony: Vec::new().into(),
             reasoning: Reasoning::new("retire the matching candidates".to_owned()),
+        },
+    }
+}
+
+fn universal_domain_removal_candidate_collection() -> RemovalCandidateCollection {
+    RemovalCandidateCollection {
+        record_query: RecordQuery::new(Query {
+            domain_match: DomainMatch::partial(DomainScopes::new(vec![DomainScope::from(
+                Domain::All,
+            )])),
+            keyword_match: KeywordMatch::Any,
+            text_match: TextMatch::Any,
+            referent_selection: ReferentSelection::Any,
+            selected_kind: SelectedKind::new(None),
+            privacy_selection: PrivacySelection::Any,
+            certainty_selection: CertaintySelection::Any,
+            importance_selection: ImportanceSelection::Any,
+        }),
+        justification: Justification {
+            testimony: Vec::new().into(),
+            reasoning: Reasoning::new("retire universal-domain matching candidates".to_owned()),
         },
     }
 }
@@ -103,9 +124,11 @@ fn meta_spirit_inputs_round_trip() {
                 CriomeSocketPathText::new("/run/user/1001/criome.sock"),
             )))
             .into(),
-            selected_guardian_prompt_target: Some(GuardianPromptTarget::Prompt(GuardianPrompt::new(
-                GuardianPromptText::new("You are the Guardian of Spirit. Default to refusal."),
-            )))
+            selected_guardian_prompt_target: Some(GuardianPromptTarget::Prompt(
+                GuardianPrompt::new(GuardianPromptText::new(
+                    "You are the Guardian of Spirit. Default to refusal.",
+                )),
+            ))
             .into(),
         }),
         Input::import(ImportedRecords::new(Vec::new()).into()),
@@ -185,6 +208,13 @@ fn collect_removal_candidates_input_round_trips() {
 }
 
 #[test]
+fn collect_removal_candidates_with_domain_all_round_trips() {
+    let input =
+        Input::collect_removal_candidates(universal_domain_removal_candidate_collection().into());
+    assert_eq!(round_trip_input(input.clone()), input);
+}
+
+#[test]
 fn removal_candidates_collected_output_round_trips() {
     let output = Output::removal_candidates_collected(removal_candidates_collected_receipt());
     assert_eq!(round_trip_output(output.clone()), output);
@@ -212,9 +242,11 @@ fn meta_spirit_canonical_examples_round_trip() {
                 CriomeSocketPathText::new("/run/user/1001/criome.sock"),
             )))
             .into(),
-            selected_guardian_prompt_target: Some(GuardianPromptTarget::Prompt(GuardianPrompt::new(
-                GuardianPromptText::new("You are the Guardian of Spirit. Default to refusal."),
-            )))
+            selected_guardian_prompt_target: Some(GuardianPromptTarget::Prompt(
+                GuardianPrompt::new(GuardianPromptText::new(
+                    "You are the Guardian of Spirit. Default to refusal.",
+                )),
+            ))
             .into(),
         }),
         "(Configure (Default (Some (Address 100.64.0.7:7777)) (Some (Socket /run/user/1001/criome.sock)) (Some (Prompt [You are the Guardian of Spirit. Default to refusal.]))))",
@@ -240,6 +272,10 @@ fn collect_removal_candidates_canonical_examples_round_trip() {
     round_trip_nota(
         Input::collect_removal_candidates(removal_candidate_collection().into()),
         "(CollectRemovalCandidates ((Any Any Any Any None Any Any Any) ([] [retire the matching candidates])))",
+    );
+    round_trip_nota(
+        Input::collect_removal_candidates(universal_domain_removal_candidate_collection().into()),
+        "(CollectRemovalCandidates (((Partial [All]) Any Any Any None Any Any Any) ([] [retire universal-domain matching candidates])))",
     );
     round_trip_nota(
         Output::removal_candidates_collected(removal_candidates_collected_receipt()),
