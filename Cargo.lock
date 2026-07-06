@@ -300,9 +300,9 @@ checksum = "88904434abc2901f197fe8cc55f0445e7ded921dba5911dad2e2b39b48e663c4"
 
 [[package]]
 name = "meta-signal-spirit"
-version = "0.6.0"
+version = "0.7.0"
 dependencies = [
- "nota 0.5.1 (git+https://github.com/LiGoldragon/nota.git?branch=main)",
+ "nota",
  "rkyv",
  "schema-rust",
  "signal-frame",
@@ -346,16 +346,7 @@ name = "nota"
 version = "0.5.1"
 source = "git+https://github.com/LiGoldragon/nota.git?branch=main#ce7c564de0a0518eaa1938d55dccc460a67cadb4"
 dependencies = [
- "nota-derive 0.3.0 (git+https://github.com/LiGoldragon/nota.git?branch=main)",
- "rkyv",
-]
-
-[[package]]
-name = "nota"
-version = "0.5.1"
-source = "git+https://github.com/LiGoldragon/nota-next.git?branch=main#96e64bcdbe531eb33a900eb3abbc58a095e01f76"
-dependencies = [
- "nota-derive 0.3.0 (git+https://github.com/LiGoldragon/nota-next.git?branch=main)",
+ "nota-derive",
  "rkyv",
 ]
 
@@ -363,16 +354,6 @@ dependencies = [
 name = "nota-derive"
 version = "0.3.0"
 source = "git+https://github.com/LiGoldragon/nota.git?branch=main#ce7c564de0a0518eaa1938d55dccc460a67cadb4"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
-name = "nota-derive"
-version = "0.3.0"
-source = "git+https://github.com/LiGoldragon/nota-next.git?branch=main#96e64bcdbe531eb33a900eb3abbc58a095e01f76"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -518,7 +499,7 @@ version = "0.2.0"
 source = "git+https://github.com/LiGoldragon/schema.git?rev=4a8aaf1de3aaf476577d5b4e93691ef47c135d1a#4a8aaf1de3aaf476577d5b4e93691ef47c135d1a"
 dependencies = [
  "blake3",
- "nota 0.5.1 (git+https://github.com/LiGoldragon/nota.git?branch=main)",
+ "nota",
  "rkyv",
  "schema-cc",
  "thiserror",
@@ -529,7 +510,7 @@ name = "schema-cc"
 version = "0.1.0"
 source = "git+https://github.com/LiGoldragon/schema.git?rev=4a8aaf1de3aaf476577d5b4e93691ef47c135d1a#4a8aaf1de3aaf476577d5b4e93691ef47c135d1a"
 dependencies = [
- "nota 0.5.1 (git+https://github.com/LiGoldragon/nota.git?branch=main)",
+ "nota",
  "prettyplease",
  "proc-macro2",
  "quote",
@@ -540,9 +521,9 @@ dependencies = [
 [[package]]
 name = "schema-rust"
 version = "0.6.0"
-source = "git+https://github.com/LiGoldragon/schema-rust.git?rev=31aad1dc494c24a4390234842f15a93afe666dee#31aad1dc494c24a4390234842f15a93afe666dee"
+source = "git+https://github.com/LiGoldragon/schema-rust.git?rev=886a9009077bdf9ee0e71fa0fa31aaf6e5444dd3#886a9009077bdf9ee0e71fa0fa31aaf6e5444dd3"
 dependencies = [
- "nota 0.5.1 (git+https://github.com/LiGoldragon/nota.git?branch=main)",
+ "nota",
  "prettyplease",
  "proc-macro2",
  "quote",
@@ -590,10 +571,10 @@ checksum = "f8fadd59c855ef2080decdef8ff161eb6661b86933c9d82e5ba29dc602a55aba"
 
 [[package]]
 name = "signal-frame"
-version = "0.2.1"
-source = "git+https://github.com/LiGoldragon/signal-frame.git?branch=main#d0dd5c0b66a90c1af72d45920e31c2b3049437f9"
+version = "0.3.0"
+source = "git+https://github.com/LiGoldragon/signal-frame.git?branch=main#bb86bef67e478ff52690a4dcceec8f22d2b005ad"
 dependencies = [
- "nota 0.5.1 (git+https://github.com/LiGoldragon/nota-next.git?branch=main)",
+ "nota",
  "paste",
  "rkyv",
  "signal-frame-macros",
@@ -603,7 +584,7 @@ dependencies = [
 [[package]]
 name = "signal-frame-macros"
 version = "0.1.1"
-source = "git+https://github.com/LiGoldragon/signal-frame.git?branch=main#d0dd5c0b66a90c1af72d45920e31c2b3049437f9"
+source = "git+https://github.com/LiGoldragon/signal-frame.git?branch=main#bb86bef67e478ff52690a4dcceec8f22d2b005ad"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -612,10 +593,10 @@ dependencies = [
 
 [[package]]
 name = "signal-spirit"
-version = "0.10.0"
-source = "git+https://github.com/LiGoldragon/signal-spirit.git?rev=c8dd7320458ebc0a29f158e7542f143a986cd536#c8dd7320458ebc0a29f158e7542f143a986cd536"
+version = "0.11.0"
+source = "git+https://github.com/LiGoldragon/signal-spirit.git?rev=3b5f08dc8a0a4f6741286c2be19e3d83d6774f70#3b5f08dc8a0a4f6741286c2be19e3d83d6774f70"
 dependencies = [
- "nota 0.5.1 (git+https://github.com/LiGoldragon/nota.git?branch=main)",
+ "nota",
  "rkyv",
  "schema",
  "schema-rust",
@@ -782,9 +763,9 @@ dependencies = [
 [[package]]
 name = "version-projection"
 version = "0.1.0"
-source = "git+https://github.com/LiGoldragon/version-projection.git?branch=main#0f450f084025f21ed7e590e28204c530240309fa"
+source = "git+https://github.com/LiGoldragon/version-projection.git?branch=main#f401ce1535afaaa1724ff181a177d1535606d336"
 dependencies = [
- "nota 0.5.1 (git+https://github.com/LiGoldragon/nota-next.git?branch=main)",
+ "nota",
  "rkyv",
  "thiserror",
 ]
