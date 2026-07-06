@@ -9,11 +9,10 @@ use meta_signal_spirit::{
 use nota::{NotaDecode, NotaEncode, NotaSource};
 use signal_frame::SignalOperationHeads;
 use signal_spirit::schema::signal::{
-    CertaintySelection, CommitSequence, DatabaseMarker, DomainMatch, ImportanceSelection,
-    Justification, KeywordMatch, PrivacySelection, Query, Reasoning, RecordCount, RecordQuery,
-    ReferentSelection, RemovalArchiveRecords, RemovalCandidateCollection,
-    RemovalCandidatesCollection, RemovedIdentifiers, SelectedKind, SkippedRemovalCandidates,
-    StateDigest, TextMatch,
+    CommitSequence, DatabaseMarker, DomainMatch, ImportanceSelection, Justification, KeywordMatch,
+    PrivacySelection, Query, Reasoning, RecordCount, RecordQuery, RemovalArchiveRecords,
+    RemovalCandidateCollection, RemovalCandidatesCollection, RemovedIdentifiers, SelectedKind,
+    SkippedRemovalCandidates, StateDigest, TextMatch,
 };
 
 const CANONICAL: &str = include_str!("../examples/canonical.nota");
@@ -31,10 +30,8 @@ fn removal_candidate_collection() -> RemovalCandidateCollection {
             domain_match: DomainMatch::Any,
             keyword_match: KeywordMatch::Any,
             text_match: TextMatch::Any,
-            referent_selection: ReferentSelection::Any,
             selected_kind: SelectedKind::new(None),
             privacy_selection: PrivacySelection::Any,
-            certainty_selection: CertaintySelection::Any,
             importance_selection: ImportanceSelection::Any,
         }),
         justification: Justification {
@@ -239,7 +236,7 @@ fn meta_spirit_canonical_examples_round_trip() {
 fn collect_removal_candidates_canonical_examples_round_trip() {
     round_trip_nota(
         Input::collect_removal_candidates(removal_candidate_collection().into()),
-        "(CollectRemovalCandidates ((Any Any Any Any None Any Any Any) ([] [retire the matching candidates])))",
+        "(CollectRemovalCandidates ((Any Any Any None Any Any) ([] [retire the matching candidates])))",
     );
     round_trip_nota(
         Output::removal_candidates_collected(removal_candidates_collected_receipt()),

@@ -20,7 +20,7 @@ nota-text = ["dep:nota", "signal-frame/nota-text", "signal-spirit/nota-text"]
 
 [dependencies]
 signal-frame  = { git = "https://github.com/LiGoldragon/signal-frame.git", branch = "main", default-features = false }
-signal-spirit = { git = "https://github.com/LiGoldragon/signal-spirit.git", branch = "main", default-features = false }
+signal-spirit = { git = "https://github.com/LiGoldragon/signal-spirit.git", rev = "0f4e91fb6df44fa5218824f2879c162751cce402", default-features = false }
 nota     = { package = "nota", git = "https://github.com/LiGoldragon/nota-next.git", branch = "main", optional = true }
 rkyv          = { version = "0.8", default-features = false, features = ["std", "bytecheck", "little_endian", "pointer_width_32", "unaligned"] }
 thiserror     = "2"
