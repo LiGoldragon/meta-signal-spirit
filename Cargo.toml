@@ -1,6 +1,6 @@
 [package]
 name         = "meta-signal-spirit"
-version      = "0.7.0"
+version      = "0.7.1"
 edition      = "2024"
 rust-version = "1.89"
 license      = "MIT OR Apache-2.0"
@@ -21,7 +21,7 @@ nota-text = ["dep:nota", "signal-domain/nota-text", "signal-frame/nota-text", "s
 [dependencies]
 signal-domain = { git = "https://github.com/LiGoldragon/signal-domain.git", rev = "801e1c5bcc824c9760e246205826e3c8e962d005", default-features = false }
 signal-frame  = { git = "https://github.com/LiGoldragon/signal-frame.git", branch = "main", default-features = false }
-signal-spirit = { git = "https://github.com/LiGoldragon/signal-spirit.git", rev = "83d2128941865c4503752f98597e0761999f8758", default-features = false }
+signal-spirit = { git = "https://github.com/LiGoldragon/signal-spirit.git", rev = "eba2afe88e03939fba9c01e4f2c82b0166a46cd6", default-features = false }
 nota     = { package = "nota", git = "https://github.com/LiGoldragon/nota.git", branch = "main", optional = true }
 rkyv          = { version = "0.8", default-features = false, features = ["std", "bytecheck", "little_endian", "pointer_width_32", "unaligned"] }
 thiserror     = "2"

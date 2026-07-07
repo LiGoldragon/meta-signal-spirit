@@ -300,7 +300,7 @@ checksum = "88904434abc2901f197fe8cc55f0445e7ded921dba5911dad2e2b39b48e663c4"
 
 [[package]]
 name = "meta-signal-spirit"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "nota",
  "rkyv",
@@ -605,8 +605,8 @@ dependencies = [
 
 [[package]]
 name = "signal-spirit"
-version = "0.12.0"
-source = "git+https://github.com/LiGoldragon/signal-spirit.git?rev=83d2128941865c4503752f98597e0761999f8758#83d2128941865c4503752f98597e0761999f8758"
+version = "0.13.0"
+source = "git+https://github.com/LiGoldragon/signal-spirit.git?rev=eba2afe88e03939fba9c01e4f2c82b0166a46cd6#eba2afe88e03939fba9c01e4f2c82b0166a46cd6"
 dependencies = [
  "nota",
  "rkyv",
