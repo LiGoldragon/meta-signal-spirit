@@ -304,6 +304,7 @@ version = "0.7.1"
 dependencies = [
  "nota",
  "rkyv",
+ "schema-language",
  "schema-rust",
  "signal-domain",
  "signal-frame",
@@ -345,7 +346,7 @@ dependencies = [
 [[package]]
 name = "nota"
 version = "0.5.1"
-source = "git+https://github.com/LiGoldragon/nota.git?branch=main#ce7c564de0a0518eaa1938d55dccc460a67cadb4"
+source = "git+https://github.com/LiGoldragon/nota.git?branch=main#d25c08a87b897f2eac28621fb6c3d25801cdccfc"
 dependencies = [
  "nota-derive",
  "rkyv",
@@ -354,7 +355,7 @@ dependencies = [
 [[package]]
 name = "nota-derive"
 version = "0.3.0"
-source = "git+https://github.com/LiGoldragon/nota.git?branch=main#ce7c564de0a0518eaa1938d55dccc460a67cadb4"
+source = "git+https://github.com/LiGoldragon/nota.git?branch=main#d25c08a87b897f2eac28621fb6c3d25801cdccfc"
 dependencies = [
  "proc-macro2",
  "quote",

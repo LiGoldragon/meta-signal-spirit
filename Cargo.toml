@@ -31,6 +31,7 @@ schema-rust = { package = "schema-rust", git = "https://github.com/LiGoldragon/s
 
 [dev-dependencies]
 nota = { package = "nota", git = "https://github.com/LiGoldragon/nota.git", branch = "main" }
+schema-language = { git = "https://github.com/LiGoldragon/schema-language.git", rev = "6aae825d668e3f607a2754afa6b7d94e9f246c41" }
 
 [lints.rust]
 unsafe_code = "forbid"
