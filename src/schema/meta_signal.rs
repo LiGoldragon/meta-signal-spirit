@@ -32,7 +32,7 @@ pub use nota::{NotaDecodeError, NotaEncode, NotaSource};
     derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct Configure(ConfigureRequest);
+pub struct ConfigureInput(ConfigureRequest);
 
 #[rustfmt::skip]
 #[cfg_attr(
@@ -40,7 +40,7 @@ pub struct Configure(ConfigureRequest);
     derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct Import(ImportRequest);
+pub struct ImportInput(ImportRequest);
 
 #[rustfmt::skip]
 #[cfg_attr(
@@ -48,7 +48,7 @@ pub struct Import(ImportRequest);
     derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct CollectRemovalCandidates(CollectRemovalCandidatesRequest);
+pub struct CollectRemovalCandidatesInput(CollectRemovalCandidatesRequest);
 
 #[rustfmt::skip]
 #[cfg_attr(
@@ -56,7 +56,7 @@ pub struct CollectRemovalCandidates(CollectRemovalCandidatesRequest);
     derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct Configured(ConfigureReceipt);
+pub struct ConfiguredOutput(ConfigureReceipt);
 
 #[rustfmt::skip]
 #[cfg_attr(
@@ -64,7 +64,7 @@ pub struct Configured(ConfigureReceipt);
     derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct Imported(ImportReceipt);
+pub struct ImportedOutput(ImportReceipt);
 
 #[rustfmt::skip]
 #[cfg_attr(
@@ -72,7 +72,7 @@ pub struct Imported(ImportReceipt);
     derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct RemovalCandidatesCollected(RemovalCandidatesCollectedReceipt);
+pub struct RemovalCandidatesCollectedOutput(RemovalCandidatesCollectedReceipt);
 
 #[rustfmt::skip]
 #[cfg_attr(
@@ -80,7 +80,7 @@ pub struct RemovalCandidatesCollected(RemovalCandidatesCollectedReceipt);
     derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct Rejected(ConfigureRejection);
+pub struct RejectedOutput(ConfigureRejection);
 
 #[rustfmt::skip]
 #[cfg_attr(
@@ -88,7 +88,7 @@ pub struct Rejected(ConfigureRejection);
     derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct HeadObserved(VersionedLogHead);
+pub struct HeadObservedOutput(VersionedLogHead);
 
 #[rustfmt::skip]
 #[cfg_attr(
@@ -96,7 +96,7 @@ pub struct HeadObserved(VersionedLogHead);
     derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct HeadObjectObserved(VersionedLogHeadObject);
+pub struct HeadObjectObservedOutput(VersionedLogHeadObject);
 
 #[rustfmt::skip]
 #[cfg_attr(
@@ -406,9 +406,9 @@ pub struct VersionedLogHeadObject {
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub enum Input {
-    Configure(Configure),
-    Import(Import),
-    CollectRemovalCandidates(CollectRemovalCandidates),
+    Configure(ConfigureInput),
+    Import(ImportInput),
+    CollectRemovalCandidates(CollectRemovalCandidatesInput),
     ObserveHead,
     ObserveHeadObject,
 }
@@ -420,16 +420,16 @@ pub enum Input {
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub enum Output {
-    Configured(Configured),
-    Imported(Imported),
-    RemovalCandidatesCollected(RemovalCandidatesCollected),
-    Rejected(Rejected),
-    HeadObserved(HeadObserved),
-    HeadObjectObserved(HeadObjectObserved),
+    Configured(ConfiguredOutput),
+    Imported(ImportedOutput),
+    RemovalCandidatesCollected(RemovalCandidatesCollectedOutput),
+    Rejected(RejectedOutput),
+    HeadObserved(HeadObservedOutput),
+    HeadObjectObserved(HeadObjectObservedOutput),
 }
 
 #[rustfmt::skip]
-impl Configure {
+impl ConfigureInput {
     pub fn new(payload: ConfigureRequest) -> Self {
         Self(payload)
     }
@@ -441,14 +441,14 @@ impl Configure {
     }
 }
 #[rustfmt::skip]
-impl From<ConfigureRequest> for Configure {
+impl From<ConfigureRequest> for ConfigureInput {
     fn from(payload: ConfigureRequest) -> Self {
         Self::new(payload)
     }
 }
 
 #[rustfmt::skip]
-impl Import {
+impl ImportInput {
     pub fn new(payload: ImportRequest) -> Self {
         Self(payload)
     }
@@ -460,14 +460,14 @@ impl Import {
     }
 }
 #[rustfmt::skip]
-impl From<ImportRequest> for Import {
+impl From<ImportRequest> for ImportInput {
     fn from(payload: ImportRequest) -> Self {
         Self::new(payload)
     }
 }
 
 #[rustfmt::skip]
-impl CollectRemovalCandidates {
+impl CollectRemovalCandidatesInput {
     pub fn new(payload: CollectRemovalCandidatesRequest) -> Self {
         Self(payload)
     }
@@ -479,14 +479,14 @@ impl CollectRemovalCandidates {
     }
 }
 #[rustfmt::skip]
-impl From<CollectRemovalCandidatesRequest> for CollectRemovalCandidates {
+impl From<CollectRemovalCandidatesRequest> for CollectRemovalCandidatesInput {
     fn from(payload: CollectRemovalCandidatesRequest) -> Self {
         Self::new(payload)
     }
 }
 
 #[rustfmt::skip]
-impl Configured {
+impl ConfiguredOutput {
     pub fn new(payload: ConfigureReceipt) -> Self {
         Self(payload)
     }
@@ -498,14 +498,14 @@ impl Configured {
     }
 }
 #[rustfmt::skip]
-impl From<ConfigureReceipt> for Configured {
+impl From<ConfigureReceipt> for ConfiguredOutput {
     fn from(payload: ConfigureReceipt) -> Self {
         Self::new(payload)
     }
 }
 
 #[rustfmt::skip]
-impl Imported {
+impl ImportedOutput {
     pub fn new(payload: ImportReceipt) -> Self {
         Self(payload)
     }
@@ -517,14 +517,14 @@ impl Imported {
     }
 }
 #[rustfmt::skip]
-impl From<ImportReceipt> for Imported {
+impl From<ImportReceipt> for ImportedOutput {
     fn from(payload: ImportReceipt) -> Self {
         Self::new(payload)
     }
 }
 
 #[rustfmt::skip]
-impl RemovalCandidatesCollected {
+impl RemovalCandidatesCollectedOutput {
     pub fn new(payload: RemovalCandidatesCollectedReceipt) -> Self {
         Self(payload)
     }
@@ -536,14 +536,14 @@ impl RemovalCandidatesCollected {
     }
 }
 #[rustfmt::skip]
-impl From<RemovalCandidatesCollectedReceipt> for RemovalCandidatesCollected {
+impl From<RemovalCandidatesCollectedReceipt> for RemovalCandidatesCollectedOutput {
     fn from(payload: RemovalCandidatesCollectedReceipt) -> Self {
         Self::new(payload)
     }
 }
 
 #[rustfmt::skip]
-impl Rejected {
+impl RejectedOutput {
     pub fn new(payload: ConfigureRejection) -> Self {
         Self(payload)
     }
@@ -555,14 +555,14 @@ impl Rejected {
     }
 }
 #[rustfmt::skip]
-impl From<ConfigureRejection> for Rejected {
+impl From<ConfigureRejection> for RejectedOutput {
     fn from(payload: ConfigureRejection) -> Self {
         Self::new(payload)
     }
 }
 
 #[rustfmt::skip]
-impl HeadObserved {
+impl HeadObservedOutput {
     pub fn new(payload: VersionedLogHead) -> Self {
         Self(payload)
     }
@@ -574,14 +574,14 @@ impl HeadObserved {
     }
 }
 #[rustfmt::skip]
-impl From<VersionedLogHead> for HeadObserved {
+impl From<VersionedLogHead> for HeadObservedOutput {
     fn from(payload: VersionedLogHead) -> Self {
         Self::new(payload)
     }
 }
 
 #[rustfmt::skip]
-impl HeadObjectObserved {
+impl HeadObjectObservedOutput {
     pub fn new(payload: VersionedLogHeadObject) -> Self {
         Self(payload)
     }
@@ -593,7 +593,7 @@ impl HeadObjectObserved {
     }
 }
 #[rustfmt::skip]
-impl From<VersionedLogHeadObject> for HeadObjectObserved {
+impl From<VersionedLogHeadObject> for HeadObjectObservedOutput {
     fn from(payload: VersionedLogHeadObject) -> Self {
         Self::new(payload)
     }
@@ -972,37 +972,37 @@ impl GuardianPromptTarget {
 #[rustfmt::skip]
 impl Input {
     pub fn configure(payload: ConfigureRequest) -> Self {
-        Self::Configure(Configure::new(payload))
+        Self::Configure(ConfigureInput::new(payload))
     }
     pub fn import(payload: ImportRequest) -> Self {
-        Self::Import(Import::new(payload))
+        Self::Import(ImportInput::new(payload))
     }
     pub fn collect_removal_candidates(payload: CollectRemovalCandidatesRequest) -> Self {
-        Self::CollectRemovalCandidates(CollectRemovalCandidates::new(payload))
+        Self::CollectRemovalCandidates(CollectRemovalCandidatesInput::new(payload))
     }
 }
 
 #[rustfmt::skip]
 impl Output {
     pub fn configured(payload: ConfigureReceipt) -> Self {
-        Self::Configured(Configured::new(payload))
+        Self::Configured(ConfiguredOutput::new(payload))
     }
     pub fn imported(payload: ImportReceipt) -> Self {
-        Self::Imported(Imported::new(payload))
+        Self::Imported(ImportedOutput::new(payload))
     }
     pub fn removal_candidates_collected(
         payload: RemovalCandidatesCollectedReceipt,
     ) -> Self {
-        Self::RemovalCandidatesCollected(RemovalCandidatesCollected::new(payload))
+        Self::RemovalCandidatesCollected(RemovalCandidatesCollectedOutput::new(payload))
     }
     pub fn rejected(payload: ConfigureRejection) -> Self {
-        Self::Rejected(Rejected::new(payload))
+        Self::Rejected(RejectedOutput::new(payload))
     }
     pub fn head_observed(payload: VersionedLogHead) -> Self {
-        Self::HeadObserved(HeadObserved::new(payload))
+        Self::HeadObserved(HeadObservedOutput::new(payload))
     }
     pub fn head_object_observed(payload: VersionedLogHeadObject) -> Self {
-        Self::HeadObjectObserved(HeadObjectObserved::new(payload))
+        Self::HeadObjectObserved(HeadObjectObservedOutput::new(payload))
     }
 }
 
@@ -1035,64 +1035,64 @@ impl From<GuardianPrompt> for GuardianPromptTarget {
 }
 
 #[rustfmt::skip]
-impl From<Configure> for Input {
-    fn from(payload: Configure) -> Self {
+impl From<ConfigureInput> for Input {
+    fn from(payload: ConfigureInput) -> Self {
         Self::Configure(payload)
     }
 }
 
 #[rustfmt::skip]
-impl From<Import> for Input {
-    fn from(payload: Import) -> Self {
+impl From<ImportInput> for Input {
+    fn from(payload: ImportInput) -> Self {
         Self::Import(payload)
     }
 }
 
 #[rustfmt::skip]
-impl From<CollectRemovalCandidates> for Input {
-    fn from(payload: CollectRemovalCandidates) -> Self {
+impl From<CollectRemovalCandidatesInput> for Input {
+    fn from(payload: CollectRemovalCandidatesInput) -> Self {
         Self::CollectRemovalCandidates(payload)
     }
 }
 
 #[rustfmt::skip]
-impl From<Configured> for Output {
-    fn from(payload: Configured) -> Self {
+impl From<ConfiguredOutput> for Output {
+    fn from(payload: ConfiguredOutput) -> Self {
         Self::Configured(payload)
     }
 }
 
 #[rustfmt::skip]
-impl From<Imported> for Output {
-    fn from(payload: Imported) -> Self {
+impl From<ImportedOutput> for Output {
+    fn from(payload: ImportedOutput) -> Self {
         Self::Imported(payload)
     }
 }
 
 #[rustfmt::skip]
-impl From<RemovalCandidatesCollected> for Output {
-    fn from(payload: RemovalCandidatesCollected) -> Self {
+impl From<RemovalCandidatesCollectedOutput> for Output {
+    fn from(payload: RemovalCandidatesCollectedOutput) -> Self {
         Self::RemovalCandidatesCollected(payload)
     }
 }
 
 #[rustfmt::skip]
-impl From<Rejected> for Output {
-    fn from(payload: Rejected) -> Self {
+impl From<RejectedOutput> for Output {
+    fn from(payload: RejectedOutput) -> Self {
         Self::Rejected(payload)
     }
 }
 
 #[rustfmt::skip]
-impl From<HeadObserved> for Output {
-    fn from(payload: HeadObserved) -> Self {
+impl From<HeadObservedOutput> for Output {
+    fn from(payload: HeadObservedOutput) -> Self {
         Self::HeadObserved(payload)
     }
 }
 
 #[rustfmt::skip]
-impl From<HeadObjectObserved> for Output {
-    fn from(payload: HeadObjectObserved) -> Self {
+impl From<HeadObjectObservedOutput> for Output {
+    fn from(payload: HeadObjectObservedOutput) -> Self {
         Self::HeadObjectObserved(payload)
     }
 }

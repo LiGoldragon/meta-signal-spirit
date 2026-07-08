@@ -6,18 +6,25 @@
   RemovalCandidateCollection signal-spirit:signal:RemovalCandidateCollection
   RemovalCandidatesCollection signal-spirit:signal:RemovalCandidatesCollection
 }
-[Configure Import CollectRemovalCandidates ObserveHead ObserveHeadObject]
-[Configured Imported RemovalCandidatesCollected Rejected HeadObserved HeadObjectObserved]
 {
-  Configure ConfigureRequest
-  Import ImportRequest
-  CollectRemovalCandidates CollectRemovalCandidatesRequest
-  Configured ConfigureReceipt
-  Imported ImportReceipt
-  RemovalCandidatesCollected RemovalCandidatesCollectedReceipt
-  Rejected ConfigureRejection
-  HeadObserved VersionedLogHead
-  HeadObjectObserved VersionedLogHeadObject
+  Vector Vector
+  Optional Optional
+  ScopeOf ScopeOf
+  Map Map
+  Bytes FixedBytes
+}
+[(Configure ConfigureInput) (Import ImportInput) (CollectRemovalCandidates CollectRemovalCandidatesInput) ObserveHead ObserveHeadObject]
+[(Configured ConfiguredOutput) (Imported ImportedOutput) (RemovalCandidatesCollected RemovalCandidatesCollectedOutput) (Rejected RejectedOutput) (HeadObserved HeadObservedOutput) (HeadObjectObserved HeadObjectObservedOutput)]
+{
+  ConfigureInput ConfigureRequest
+  ImportInput ImportRequest
+  CollectRemovalCandidatesInput CollectRemovalCandidatesRequest
+  ConfiguredOutput ConfigureReceipt
+  ImportedOutput ImportReceipt
+  RemovalCandidatesCollectedOutput RemovalCandidatesCollectedReceipt
+  RejectedOutput ConfigureRejection
+  HeadObservedOutput VersionedLogHead
+  HeadObjectObservedOutput VersionedLogHeadObject
 
   ArchivePathText String
   ArchivePath { ArchivePathText }
@@ -35,16 +42,16 @@
   GuardianPrompt { GuardianPromptText }
   GuardianPromptTarget [Default (Prompt GuardianPrompt)]
 
-  SelectedMirrorTarget (Optional MirrorTarget)
-  SelectedCriomeGateTarget (Optional CriomeGateTarget)
-  SelectedGuardianPromptTarget (Optional GuardianPromptTarget)
+  SelectedMirrorTarget Optional.MirrorTarget
+  SelectedCriomeGateTarget Optional.CriomeGateTarget
+  SelectedGuardianPromptTarget Optional.GuardianPromptTarget
   ConfigureRequest { ArchiveDatabaseTarget SelectedMirrorTarget SelectedCriomeGateTarget SelectedGuardianPromptTarget }
   ConfigureReceipt { ArchiveDatabaseTarget SelectedMirrorTarget SelectedCriomeGateTarget SelectedGuardianPromptTarget DatabaseMarker }
   ConfigureRejection { ConfigureRejectionReason DatabaseMarker }
   ConfigureRejectionReason [ArchiveTargetUnwritable InternalError]
 
   ImportedRecord { RecordIdentifier Entry }
-  ImportedRecords (Vec ImportedRecord)
+  ImportedRecords Vector.ImportedRecord
   ImportRequest { ImportedRecords }
   ImportReceipt { RecordCount DatabaseMarker }
 
@@ -52,10 +59,10 @@
   RemovalCandidatesCollectedReceipt { RemovalCandidatesCollection DatabaseMarker }
 
   HeadDigestHex String
-  SelectedHeadDigest (Optional HeadDigestHex)
+  SelectedHeadDigest Optional.HeadDigestHex
   VersionedLogHead { DatabaseMarker SelectedHeadDigest }
 
   HeadObjectHex String
-  SelectedHeadObject (Optional HeadObjectHex)
+  SelectedHeadObject Optional.HeadObjectHex
   VersionedLogHeadObject { DatabaseMarker SelectedHeadObject }
 }

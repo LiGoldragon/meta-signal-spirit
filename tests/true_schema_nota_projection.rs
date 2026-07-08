@@ -21,12 +21,7 @@ impl DecodedMetaSignalSchema {
         let engine = SchemaEngine::default();
         let resolver = ImportResolver::new()
             .with_module_source("signal-domain", "domain", "0.1.0", DOMAIN_SCHEMA_SOURCE)
-            .with_module_source(
-                "signal-spirit",
-                "signal",
-                "0.13.0",
-                SIGNAL_SCHEMA_SOURCE,
-            );
+            .with_module_source("signal-spirit", "signal", "0.13.0", SIGNAL_SCHEMA_SOURCE);
         let source = SchemaSource::from_schema_text(META_SIGNAL_SCHEMA_SOURCE)
             .expect("meta signal schema source decodes");
         let meta_signal = engine
@@ -56,7 +51,13 @@ fn decoded_meta_signal_true_schema_projects_to_structured_nota() {
     );
     assert!(
         rendered.contains(
-            "(Enum (Input [(Configure (Some (Plain Configure)) None) (Import (Some (Plain Import)) None) (CollectRemovalCandidates (Some (Plain CollectRemovalCandidates)) None)"
+            "[(Vector Vector) (Optional Optional) (ScopeOf ScopeOf) (Map Map) (Bytes FixedBytes)]"
+        ),
+        "structured TrueSchema NOTA should expose the positional generic builtins section"
+    );
+    assert!(
+        rendered.contains(
+            "(Enum (Input [(Configure (Some (Plain ConfigureInput)) None) (Import (Some (Plain ImportInput)) None) (CollectRemovalCandidates (Some (Plain CollectRemovalCandidatesInput)) None)"
         ),
         "structured TrueSchema NOTA should expose the decoded meta Input root enum"
     );
@@ -67,7 +68,9 @@ fn decoded_meta_signal_true_schema_projects_to_structured_nota() {
         "structured TrueSchema NOTA should include the semantic ConfigureRequest declaration"
     );
     assert!(
-        rendered.contains("(CollectRemovalCandidates (Some (Plain CollectRemovalCandidates)) None)"),
+        rendered.contains(
+            "(CollectRemovalCandidates (Some (Plain CollectRemovalCandidatesInput)) None)"
+        ),
         "structured TrueSchema NOTA should preserve the owner-only removal-candidate root"
     );
     assert!(
