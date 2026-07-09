@@ -62,6 +62,7 @@ daemon-side projections.
 | Every meta request is a contract-local verb. | `round_trip.rs` asserts each variant's NOTA head. Sema classification is daemon-side projection only. |
 | Contract code contains no runtime. | Source contains no Kameo, Tokio, redb, sockets, or sema-engine code. |
 | The contract imports shared Spirit nouns instead of duplicating them. | `schema/meta-signal.schema` imports `DatabaseMarker`, `Entry`, `RecordIdentifier`, and `RecordCount` from `signal-spirit`. |
+| Authored schema uses strict positional dotted syntax. | `schema/meta-signal.schema` applies generics as positional dotted forms (`Optional.MirrorTarget`, `Vector.ImportedRecord`). Its single-colon import paths (`signal-spirit:signal:DatabaseMarker`) are non-conforming and must be rewritten to dotted import paths (`signal-spirit.signal.DatabaseMarker`). |
 
 ## Code Map
 
