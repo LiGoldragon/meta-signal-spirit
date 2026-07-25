@@ -47,7 +47,7 @@ fn default_build_round_trips_meta_request_without_nota_text() {
 #[test]
 fn default_build_round_trips_domain_all_imported_query_without_nota_text() {
     let request =
-        Input::collect_removal_candidates(universal_domain_removal_candidate_collection().into());
+        Input::collect_removal_candidates(universal_domain_removal_candidate_collection());
 
     let bytes = request.encode_signal_frame().expect("encode request");
     let (_route, decoded) = Input::decode_signal_frame(&bytes).expect("decode request");

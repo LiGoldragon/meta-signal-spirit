@@ -1,61 +1,79 @@
 {
-  DatabaseMarker signal-spirit:signal:DatabaseMarker
-  Entry signal-spirit:signal:Entry
-  RecordIdentifier signal-spirit:signal:RecordIdentifier
-  RecordCount signal-spirit:signal:RecordCount
-  RemovalCandidateCollection signal-spirit:signal:RemovalCandidateCollection
-  RemovalCandidatesCollection signal-spirit:signal:RemovalCandidatesCollection
+  signal-spirit.signal.[
+    DatabaseMarker
+    Entry
+    RecordIdentifier
+    RecordCount
+    RemovalCandidateCollection
+    RemovalCandidatesCollection
+  ]
 }
-[Configure Import CollectRemovalCandidates ObserveHead ObserveHeadObject]
-[Configured Imported RemovalCandidatesCollected Rejected HeadObserved HeadObjectObserved]
+[
+  Configure.ConfigureRequest
+  Import.ImportRequest
+  CollectRemovalCandidates.CollectRemovalCandidatesRequest
+  ObserveHead
+  ObserveHeadObject
+]
+[
+  Configured.ConfigureReceipt
+  Imported.ImportReceipt
+  RemovalCandidatesCollected.RemovalCandidatesCollectedReceipt
+  Rejected.ConfigureRejection
+  HeadObserved.VersionedLogHead
+  HeadObjectObserved.VersionedLogHeadObject
+]
 {
-  Configure ConfigureRequest
-  Import ImportRequest
-  CollectRemovalCandidates CollectRemovalCandidatesRequest
-  Configured ConfigureReceipt
-  Imported ImportReceipt
-  RemovalCandidatesCollected RemovalCandidatesCollectedReceipt
-  Rejected ConfigureRejection
-  HeadObserved VersionedLogHead
-  HeadObjectObserved VersionedLogHeadObject
+  ArchivePathText.String
+  ArchivePath.ArchivePathText
+  ArchiveDatabaseTarget.[Default Path.ArchivePath]
 
-  ArchivePathText String
-  ArchivePath { ArchivePathText }
-  ArchiveDatabaseTarget [Default (Path ArchivePath)]
+  MirrorAddressText.String
+  MirrorAddress.MirrorAddressText
+  MirrorTarget.[Default Address.MirrorAddress]
 
-  MirrorAddressText String
-  MirrorAddress { MirrorAddressText }
-  MirrorTarget [Default (Address MirrorAddress)]
+  CriomeSocketPathText.String
+  CriomeSocketPath.CriomeSocketPathText
+  CriomeGateTarget.[Default Socket.CriomeSocketPath]
 
-  CriomeSocketPathText String
-  CriomeSocketPath { CriomeSocketPathText }
-  CriomeGateTarget [Default (Socket CriomeSocketPath)]
+  GuardianPromptText.String
+  GuardianPrompt.GuardianPromptText
+  GuardianPromptTarget.[Default Prompt.GuardianPrompt]
 
-  GuardianPromptText String
-  GuardianPrompt { GuardianPromptText }
-  GuardianPromptTarget [Default (Prompt GuardianPrompt)]
+  SelectedMirrorTarget.Optional.MirrorTarget
+  SelectedCriomeGateTarget.Optional.CriomeGateTarget
+  SelectedGuardianPromptTarget.Optional.GuardianPromptTarget
+  ConfigureRequest.{
+    ArchiveDatabaseTarget
+    SelectedMirrorTarget
+    SelectedCriomeGateTarget
+    SelectedGuardianPromptTarget
+  }
+  ConfigureReceipt.{
+    ArchiveDatabaseTarget
+    SelectedMirrorTarget
+    SelectedCriomeGateTarget
+    SelectedGuardianPromptTarget
+    DatabaseMarker
+  }
+  ConfigureRejection.{ ConfigureRejectionReason DatabaseMarker }
+  ConfigureRejectionReason.[ArchiveTargetUnwritable InternalError]
 
-  SelectedMirrorTarget (Optional MirrorTarget)
-  SelectedCriomeGateTarget (Optional CriomeGateTarget)
-  SelectedGuardianPromptTarget (Optional GuardianPromptTarget)
-  ConfigureRequest { ArchiveDatabaseTarget SelectedMirrorTarget SelectedCriomeGateTarget SelectedGuardianPromptTarget }
-  ConfigureReceipt { ArchiveDatabaseTarget SelectedMirrorTarget SelectedCriomeGateTarget SelectedGuardianPromptTarget DatabaseMarker }
-  ConfigureRejection { ConfigureRejectionReason DatabaseMarker }
-  ConfigureRejectionReason [ArchiveTargetUnwritable InternalError]
+  ImportedRecord.{ RecordIdentifier Entry }
+  ImportedRecords.Vector.ImportedRecord
+  ImportRequest.{ ImportedRecords }
+  ImportReceipt.{ RecordCount DatabaseMarker }
 
-  ImportedRecord { RecordIdentifier Entry }
-  ImportedRecords (Vec ImportedRecord)
-  ImportRequest { ImportedRecords }
-  ImportReceipt { RecordCount DatabaseMarker }
+  CollectRemovalCandidatesRequest.RemovalCandidateCollection
+  RemovalCandidatesCollectedReceipt.{ RemovalCandidatesCollection DatabaseMarker }
 
-  CollectRemovalCandidatesRequest { RemovalCandidateCollection }
-  RemovalCandidatesCollectedReceipt { RemovalCandidatesCollection DatabaseMarker }
+  HeadDigestHex.String
+  SelectedHeadDigest.Optional.HeadDigestHex
+  VersionedLogHead.{ DatabaseMarker SelectedHeadDigest }
 
-  HeadDigestHex String
-  SelectedHeadDigest (Optional HeadDigestHex)
-  VersionedLogHead { DatabaseMarker SelectedHeadDigest }
-
-  HeadObjectHex String
-  SelectedHeadObject (Optional HeadObjectHex)
-  VersionedLogHeadObject { DatabaseMarker SelectedHeadObject }
+  HeadObjectHex.String
+  SelectedHeadObject.Optional.HeadObjectHex
+  VersionedLogHeadObject.{ DatabaseMarker SelectedHeadObject }
 }
+{}
+{}

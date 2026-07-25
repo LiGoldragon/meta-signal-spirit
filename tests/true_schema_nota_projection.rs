@@ -21,12 +21,7 @@ impl DecodedMetaSignalSchema {
         let engine = SchemaEngine::default();
         let resolver = ImportResolver::new()
             .with_module_source("signal-domain", "domain", "0.1.0", DOMAIN_SCHEMA_SOURCE)
-            .with_module_source(
-                "signal-spirit",
-                "signal",
-                "0.13.0",
-                SIGNAL_SCHEMA_SOURCE,
-            );
+            .with_module_source("signal-spirit", "signal", "0.13.0", SIGNAL_SCHEMA_SOURCE);
         let source = SchemaSource::from_schema_text(META_SIGNAL_SCHEMA_SOURCE)
             .expect("meta signal schema source decodes");
         let meta_signal = engine
@@ -42,37 +37,76 @@ impl DecodedMetaSignalSchema {
 
 #[test]
 fn decoded_meta_signal_true_schema_projects_to_structured_nota() {
+    let source = SchemaSource::from_schema_text(META_SIGNAL_SCHEMA_SOURCE)
+        .expect("meta signal schema source decodes");
+    let input_names = source
+        .input()
+        .body()
+        .as_enum()
+        .expect("Input root remains an enum")
+        .variants()
+        .iter()
+        .map(|variant| variant.name().as_str())
+        .collect::<Vec<_>>();
+    let output_names = source
+        .output()
+        .body()
+        .as_enum()
+        .expect("Output root remains an enum")
+        .variants()
+        .iter()
+        .map(|variant| variant.name().as_str())
+        .collect::<Vec<_>>();
+    let declaration_names = source
+        .types()
+        .entries()
+        .iter()
+        .map(|entry| entry.name().as_str())
+        .collect::<Vec<_>>();
+
+    assert_eq!(
+        input_names,
+        [
+            "Configure",
+            "Import",
+            "CollectRemovalCandidates",
+            "ObserveHead",
+            "ObserveHeadObject",
+        ]
+    );
+    assert_eq!(
+        output_names,
+        [
+            "Configured",
+            "Imported",
+            "RemovalCandidatesCollected",
+            "Rejected",
+            "HeadObserved",
+            "HeadObjectObserved",
+        ]
+    );
+    assert!(declaration_names.contains(&"ConfigureRequest"));
+    assert!(
+        !declaration_names.contains(&"Entry"),
+        "meta signal must import Entry rather than redeclare it"
+    );
+
     let schema = DecodedMetaSignalSchema::from_authored_source();
     let rendered = schema.meta_signal.to_nota();
 
     let expected_prefix = format!(
-        "((meta-signal-spirit:meta-signal {}) [(DatabaseMarker (Plain signal-spirit:signal:DatabaseMarker)) (Entry (Plain signal-spirit:signal:Entry))",
+        "{{{{meta-signal-spirit:meta-signal {}}} [",
         env!("CARGO_PKG_VERSION")
     );
     let prefix_excerpt = rendered.chars().take(256).collect::<String>();
     assert!(
         rendered.starts_with(&expected_prefix),
-        "structured TrueSchema NOTA should begin with the meta identity and resolved signal-spirit imports; prefix was {prefix_excerpt}"
+        "structured TrueSchema NOTA should begin with the meta identity; prefix was {prefix_excerpt}"
     );
     assert!(
-        rendered.contains(
-            "(Enum (Input [(Configure (Some (Plain Configure)) None) (Import (Some (Plain Import)) None) (CollectRemovalCandidates (Some (Plain CollectRemovalCandidates)) None)"
-        ),
-        "structured TrueSchema NOTA should expose the decoded meta Input root enum"
-    );
-    assert!(
-        rendered.contains(
-            "(Public ConfigureRequest [] (Struct (ConfigureRequest {archive_database_target (Plain ArchiveDatabaseTarget) selected_mirror_target (Plain SelectedMirrorTarget) selected_criome_gate_target (Plain SelectedCriomeGateTarget) selected_guardian_prompt_target (Plain SelectedGuardianPromptTarget)})) ([]))"
-        ),
-        "structured TrueSchema NOTA should include the semantic ConfigureRequest declaration"
-    );
-    assert!(
-        rendered.contains("(CollectRemovalCandidates (Some (Plain CollectRemovalCandidates)) None)"),
-        "structured TrueSchema NOTA should preserve the owner-only removal-candidate root"
-    );
-    assert!(
-        !rendered.contains("(Public Entry []"),
-        "meta signal TrueSchema should import Entry from signal-spirit instead of duplicating it"
+        rendered.contains("{DatabaseMarker (Plain signal-spirit:signal:DatabaseMarker)}")
+            && rendered.contains("{Entry (Plain signal-spirit:signal:Entry)}"),
+        "structured TrueSchema NOTA should retain resolved signal-spirit imports"
     );
 
     let document = Document::parse(&rendered).expect("structured meta TrueSchema NOTA parses");

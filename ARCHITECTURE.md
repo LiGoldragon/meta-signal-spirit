@@ -2,9 +2,13 @@
 
 *MetaSignal contract for privileged Spirit lifecycle and policy.*
 
-## 0.5 · Direction
+## Direction
 
-`meta-signal-spirit` is the owner-only policy Signal contract for `spirit`. Ordinary psyche statements, intent observations, clarification questions, and subscriptions live in `signal-spirit`; this crate carries the owner operations that ordinary peers must not hold: `Configure` (sets archive target, mirror target, local-criome gate target, and optional guardian-prompt target) and `Import` (restores pre-vetted records with stable identifiers under owner authority). Sema vocabulary is daemon-side observation classification only and must not be the public request spine.
+`meta-signal-spirit` is the owner-only policy Signal contract for `spirit`.
+Ordinary psyche statements, queries, and subscriptions live in
+`signal-spirit`. This crate owns configuration, privileged import, removal
+candidate collection, and log-head observation. Sema vocabulary is daemon-side
+observation classification only and is not the public request spine.
 
 ## Role
 
@@ -30,7 +34,7 @@ The old `Mutate StartOrder` / `Mutate DrainAndStopOrder` /
 `Retract RetireIdentity` shape is retired. The later hand-written
 `Start` / `Drain` / `Reload` / `Register` / `Retire` placeholder surface is
 also retired. The live contract is schema-derived and carries the owner-only
-`Configure` / `Import` surface used by `spirit`.
+surface used by `spirit`.
 
 ## Contract Surface
 
@@ -38,6 +42,18 @@ also retired. The live contract is schema-derived and carries the owner-only
 |---|---|
 | `Configure(ConfigureRequest)` | Set the owner-controlled runtime policy targets: the archive database target, the optional mirror target, the optional local-criome gate target, and the optional guardian-prompt target. |
 | `Import(ImportRequest)` | Restore pre-vetted records with stable identifiers, bypassing ordinary guardian admission by owner authority. |
+| `CollectRemovalCandidates(CollectRemovalCandidatesRequest)` | Collect and archive removal candidates under owner authority. This capability does not exist on the ordinary working socket. |
+| `ObserveHead` | Observe the current versioned log-head digest. |
+| `ObserveHeadObject` | Observe the current versioned log-head object. |
+
+| Reply | Meaning |
+|---|---|
+| `Configured(ConfigureReceipt)` | Report the applied owner configuration. |
+| `Imported(ImportReceipt)` | Report the imported record count and resulting database marker. |
+| `RemovalCandidatesCollected(RemovalCandidatesCollectedReceipt)` | Report archived, removed, and skipped candidates with the resulting database marker. |
+| `Rejected(ConfigureRejection)` | Reject an invalid or unavailable configuration target. |
+| `HeadObserved(VersionedLogHead)` | Report the optional current log-head digest. |
+| `HeadObjectObserved(VersionedLogHeadObject)` | Report the optional current log-head object. |
 
 `ConfigureRequest` and `ConfigureReceipt` each carry an optional
 `SelectedGuardianPromptTarget`. `GuardianPromptTarget::Default` keeps the
@@ -58,19 +74,25 @@ daemon-side projections.
 
 | Constraint | Witness |
 |---|---|
-| Lifecycle/configuration orders live only in the meta contract. | Ordinary `signal-spirit::Input` has no meta variants. |
-| Every meta request is a contract-local verb. | `round_trip.rs` asserts each variant's NOTA head. Sema classification is daemon-side projection only. |
+| Owner configuration, import, removal-candidate collection, and head observation live only in the meta contract. | `wire_inventory.rs` compares both authored schemas and proves the ordinary `signal-spirit` roots have none of the owner-only variants. |
+| The ordinary working socket has no deletion or removal capability. | `wire_inventory.rs` closes `Remove` and `CollectRemovalCandidates` on ordinary Input and closes removal replies on ordinary Output. |
+| Every meta request is a contract-local verb. | `wire_inventory.rs` locks the complete authored and generated root inventory. Sema classification is daemon-side projection only. |
+| Wire identity is stable. | `wire_inventory.rs` locks all request/reply route order, short headers, and archived route tags. |
+| The checked-in Rust contract is generated from the current six-slot dotted/positional schema. | Every build runs the schema-rust freshness check; `wire_inventory.rs` also proves authored roots and generated heads converge. |
 | Contract code contains no runtime. | Source contains no Kameo, Tokio, redb, sockets, or sema-engine code. |
-| The contract imports shared Spirit nouns instead of duplicating them. | `schema/meta-signal.schema` imports `DatabaseMarker`, `Entry`, `RecordIdentifier`, and `RecordCount` from `signal-spirit`. |
+| The contract imports shared Spirit nouns instead of duplicating them. | `schema/meta-signal.schema` imports `DatabaseMarker`, `Entry`, `RecordIdentifier`, `RecordCount`, `RemovalCandidateCollection`, and `RemovalCandidatesCollection` from `signal-spirit`. |
+| One canonical micro-repository dependency world is used. | `dependency_boundary.rs` locks exact producer revisions and rejects duplicate, branch, patch, path, and legacy dependency sources. |
 
 ## Code Map
 
 ```text
 schema/meta-signal.schema — source-of-truth meta policy schema
 src/schema/meta_signal.rs — generated meta request/reply records and codecs
-src/lib.rs              — generated contract re-exports
+src/lib.rs              — generated contract re-exports and compatibility helpers
 examples/canonical.nota — meta request/reply examples plus the ordinary signal-spirit `PublicIntent` dependency witness
 tests/round_trip.rs     — rkyv frame + NOTA + verb mapping witnesses
 tests/frame.rs          — default-feature rkyv frame witness
 tests/dependency_boundary.rs — default binary-only dependency witness
+tests/wire_inventory.rs — complete roots, headers, tags, and owner-only boundary
+tests/true_schema_nota_projection.rs — authored schema lowering and structured NOTA witness
 ```

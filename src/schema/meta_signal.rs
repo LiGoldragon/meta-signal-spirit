@@ -32,78 +32,6 @@ pub use nota::{NotaDecodeError, NotaEncode, NotaSource};
     derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct Configure(ConfigureRequest);
-
-#[rustfmt::skip]
-#[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
-)]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct Import(ImportRequest);
-
-#[rustfmt::skip]
-#[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
-)]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct CollectRemovalCandidates(CollectRemovalCandidatesRequest);
-
-#[rustfmt::skip]
-#[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
-)]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct Configured(ConfigureReceipt);
-
-#[rustfmt::skip]
-#[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
-)]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct Imported(ImportReceipt);
-
-#[rustfmt::skip]
-#[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
-)]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct RemovalCandidatesCollected(RemovalCandidatesCollectedReceipt);
-
-#[rustfmt::skip]
-#[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
-)]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct Rejected(ConfigureRejection);
-
-#[rustfmt::skip]
-#[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
-)]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct HeadObserved(VersionedLogHead);
-
-#[rustfmt::skip]
-#[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
-)]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct HeadObjectObserved(VersionedLogHeadObject);
-
-#[rustfmt::skip]
-#[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
-)]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct ArchivePathText(String);
 
 #[rustfmt::skip]
@@ -406,9 +334,9 @@ pub struct VersionedLogHeadObject {
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub enum Input {
-    Configure(Configure),
-    Import(Import),
-    CollectRemovalCandidates(CollectRemovalCandidates),
+    Configure(ConfigureRequest),
+    Import(ImportRequest),
+    CollectRemovalCandidates(CollectRemovalCandidatesRequest),
     ObserveHead,
     ObserveHeadObject,
 }
@@ -420,183 +348,12 @@ pub enum Input {
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub enum Output {
-    Configured(Configured),
-    Imported(Imported),
-    RemovalCandidatesCollected(RemovalCandidatesCollected),
-    Rejected(Rejected),
-    HeadObserved(HeadObserved),
-    HeadObjectObserved(HeadObjectObserved),
-}
-
-#[rustfmt::skip]
-impl Configure {
-    pub fn new(payload: ConfigureRequest) -> Self {
-        Self(payload)
-    }
-    pub fn payload(&self) -> &ConfigureRequest {
-        &self.0
-    }
-    pub fn into_payload(self) -> ConfigureRequest {
-        self.0
-    }
-}
-#[rustfmt::skip]
-impl From<ConfigureRequest> for Configure {
-    fn from(payload: ConfigureRequest) -> Self {
-        Self::new(payload)
-    }
-}
-
-#[rustfmt::skip]
-impl Import {
-    pub fn new(payload: ImportRequest) -> Self {
-        Self(payload)
-    }
-    pub fn payload(&self) -> &ImportRequest {
-        &self.0
-    }
-    pub fn into_payload(self) -> ImportRequest {
-        self.0
-    }
-}
-#[rustfmt::skip]
-impl From<ImportRequest> for Import {
-    fn from(payload: ImportRequest) -> Self {
-        Self::new(payload)
-    }
-}
-
-#[rustfmt::skip]
-impl CollectRemovalCandidates {
-    pub fn new(payload: CollectRemovalCandidatesRequest) -> Self {
-        Self(payload)
-    }
-    pub fn payload(&self) -> &CollectRemovalCandidatesRequest {
-        &self.0
-    }
-    pub fn into_payload(self) -> CollectRemovalCandidatesRequest {
-        self.0
-    }
-}
-#[rustfmt::skip]
-impl From<CollectRemovalCandidatesRequest> for CollectRemovalCandidates {
-    fn from(payload: CollectRemovalCandidatesRequest) -> Self {
-        Self::new(payload)
-    }
-}
-
-#[rustfmt::skip]
-impl Configured {
-    pub fn new(payload: ConfigureReceipt) -> Self {
-        Self(payload)
-    }
-    pub fn payload(&self) -> &ConfigureReceipt {
-        &self.0
-    }
-    pub fn into_payload(self) -> ConfigureReceipt {
-        self.0
-    }
-}
-#[rustfmt::skip]
-impl From<ConfigureReceipt> for Configured {
-    fn from(payload: ConfigureReceipt) -> Self {
-        Self::new(payload)
-    }
-}
-
-#[rustfmt::skip]
-impl Imported {
-    pub fn new(payload: ImportReceipt) -> Self {
-        Self(payload)
-    }
-    pub fn payload(&self) -> &ImportReceipt {
-        &self.0
-    }
-    pub fn into_payload(self) -> ImportReceipt {
-        self.0
-    }
-}
-#[rustfmt::skip]
-impl From<ImportReceipt> for Imported {
-    fn from(payload: ImportReceipt) -> Self {
-        Self::new(payload)
-    }
-}
-
-#[rustfmt::skip]
-impl RemovalCandidatesCollected {
-    pub fn new(payload: RemovalCandidatesCollectedReceipt) -> Self {
-        Self(payload)
-    }
-    pub fn payload(&self) -> &RemovalCandidatesCollectedReceipt {
-        &self.0
-    }
-    pub fn into_payload(self) -> RemovalCandidatesCollectedReceipt {
-        self.0
-    }
-}
-#[rustfmt::skip]
-impl From<RemovalCandidatesCollectedReceipt> for RemovalCandidatesCollected {
-    fn from(payload: RemovalCandidatesCollectedReceipt) -> Self {
-        Self::new(payload)
-    }
-}
-
-#[rustfmt::skip]
-impl Rejected {
-    pub fn new(payload: ConfigureRejection) -> Self {
-        Self(payload)
-    }
-    pub fn payload(&self) -> &ConfigureRejection {
-        &self.0
-    }
-    pub fn into_payload(self) -> ConfigureRejection {
-        self.0
-    }
-}
-#[rustfmt::skip]
-impl From<ConfigureRejection> for Rejected {
-    fn from(payload: ConfigureRejection) -> Self {
-        Self::new(payload)
-    }
-}
-
-#[rustfmt::skip]
-impl HeadObserved {
-    pub fn new(payload: VersionedLogHead) -> Self {
-        Self(payload)
-    }
-    pub fn payload(&self) -> &VersionedLogHead {
-        &self.0
-    }
-    pub fn into_payload(self) -> VersionedLogHead {
-        self.0
-    }
-}
-#[rustfmt::skip]
-impl From<VersionedLogHead> for HeadObserved {
-    fn from(payload: VersionedLogHead) -> Self {
-        Self::new(payload)
-    }
-}
-
-#[rustfmt::skip]
-impl HeadObjectObserved {
-    pub fn new(payload: VersionedLogHeadObject) -> Self {
-        Self(payload)
-    }
-    pub fn payload(&self) -> &VersionedLogHeadObject {
-        &self.0
-    }
-    pub fn into_payload(self) -> VersionedLogHeadObject {
-        self.0
-    }
-}
-#[rustfmt::skip]
-impl From<VersionedLogHeadObject> for HeadObjectObserved {
-    fn from(payload: VersionedLogHeadObject) -> Self {
-        Self::new(payload)
-    }
+    Configured(ConfigureReceipt),
+    Imported(ImportReceipt),
+    RemovalCandidatesCollected(RemovalCandidatesCollectedReceipt),
+    Rejected(ConfigureRejection),
+    HeadObserved(VersionedLogHead),
+    HeadObjectObserved(VersionedLogHeadObject),
 }
 
 #[rustfmt::skip]
@@ -972,37 +729,37 @@ impl GuardianPromptTarget {
 #[rustfmt::skip]
 impl Input {
     pub fn configure(payload: ConfigureRequest) -> Self {
-        Self::Configure(Configure::new(payload))
+        Self::Configure(payload)
     }
-    pub fn import(payload: ImportRequest) -> Self {
-        Self::Import(Import::new(payload))
+    pub fn import(payload: ImportedRecords) -> Self {
+        Self::Import(ImportRequest::new(payload))
     }
-    pub fn collect_removal_candidates(payload: CollectRemovalCandidatesRequest) -> Self {
-        Self::CollectRemovalCandidates(CollectRemovalCandidates::new(payload))
+    pub fn collect_removal_candidates(payload: RemovalCandidateCollection) -> Self {
+        Self::CollectRemovalCandidates(CollectRemovalCandidatesRequest::new(payload))
     }
 }
 
 #[rustfmt::skip]
 impl Output {
     pub fn configured(payload: ConfigureReceipt) -> Self {
-        Self::Configured(Configured::new(payload))
+        Self::Configured(payload)
     }
     pub fn imported(payload: ImportReceipt) -> Self {
-        Self::Imported(Imported::new(payload))
+        Self::Imported(payload)
     }
     pub fn removal_candidates_collected(
         payload: RemovalCandidatesCollectedReceipt,
     ) -> Self {
-        Self::RemovalCandidatesCollected(RemovalCandidatesCollected::new(payload))
+        Self::RemovalCandidatesCollected(payload)
     }
     pub fn rejected(payload: ConfigureRejection) -> Self {
-        Self::Rejected(Rejected::new(payload))
+        Self::Rejected(payload)
     }
     pub fn head_observed(payload: VersionedLogHead) -> Self {
-        Self::HeadObserved(HeadObserved::new(payload))
+        Self::HeadObserved(payload)
     }
     pub fn head_object_observed(payload: VersionedLogHeadObject) -> Self {
-        Self::HeadObjectObserved(HeadObjectObserved::new(payload))
+        Self::HeadObjectObserved(payload)
     }
 }
 
@@ -1035,64 +792,64 @@ impl From<GuardianPrompt> for GuardianPromptTarget {
 }
 
 #[rustfmt::skip]
-impl From<Configure> for Input {
-    fn from(payload: Configure) -> Self {
+impl From<ConfigureRequest> for Input {
+    fn from(payload: ConfigureRequest) -> Self {
         Self::Configure(payload)
     }
 }
 
 #[rustfmt::skip]
-impl From<Import> for Input {
-    fn from(payload: Import) -> Self {
+impl From<ImportRequest> for Input {
+    fn from(payload: ImportRequest) -> Self {
         Self::Import(payload)
     }
 }
 
 #[rustfmt::skip]
-impl From<CollectRemovalCandidates> for Input {
-    fn from(payload: CollectRemovalCandidates) -> Self {
+impl From<CollectRemovalCandidatesRequest> for Input {
+    fn from(payload: CollectRemovalCandidatesRequest) -> Self {
         Self::CollectRemovalCandidates(payload)
     }
 }
 
 #[rustfmt::skip]
-impl From<Configured> for Output {
-    fn from(payload: Configured) -> Self {
+impl From<ConfigureReceipt> for Output {
+    fn from(payload: ConfigureReceipt) -> Self {
         Self::Configured(payload)
     }
 }
 
 #[rustfmt::skip]
-impl From<Imported> for Output {
-    fn from(payload: Imported) -> Self {
+impl From<ImportReceipt> for Output {
+    fn from(payload: ImportReceipt) -> Self {
         Self::Imported(payload)
     }
 }
 
 #[rustfmt::skip]
-impl From<RemovalCandidatesCollected> for Output {
-    fn from(payload: RemovalCandidatesCollected) -> Self {
+impl From<RemovalCandidatesCollectedReceipt> for Output {
+    fn from(payload: RemovalCandidatesCollectedReceipt) -> Self {
         Self::RemovalCandidatesCollected(payload)
     }
 }
 
 #[rustfmt::skip]
-impl From<Rejected> for Output {
-    fn from(payload: Rejected) -> Self {
+impl From<ConfigureRejection> for Output {
+    fn from(payload: ConfigureRejection) -> Self {
         Self::Rejected(payload)
     }
 }
 
 #[rustfmt::skip]
-impl From<HeadObserved> for Output {
-    fn from(payload: HeadObserved) -> Self {
+impl From<VersionedLogHead> for Output {
+    fn from(payload: VersionedLogHead) -> Self {
         Self::HeadObserved(payload)
     }
 }
 
 #[rustfmt::skip]
-impl From<HeadObjectObserved> for Output {
-    fn from(payload: HeadObjectObserved) -> Self {
+impl From<VersionedLogHeadObject> for Output {
+    fn from(payload: VersionedLogHeadObject) -> Self {
         Self::HeadObjectObserved(payload)
     }
 }
@@ -1147,6 +904,76 @@ pub mod short_header {
 #[rustfmt::skip]
 const SIGNAL_SHORT_HEADER_BYTE_COUNT: usize = 8;
 #[rustfmt::skip]
+/// Reserved refusal header. Real variant headers pack root and
+/// variant indices into the top sixteen bits and leave the low
+/// forty-eight bits zero, so the all-ones value can never name a
+/// declared variant.
+const ENGINE_REFUSAL_SHORT_HEADER: u64 = u64::MAX;
+#[rustfmt::skip]
+/// Why the daemon refused to produce an ordinary reply.
+#[derive(
+    rkyv::Archive,
+    rkyv::Serialize,
+    rkyv::Deserialize,
+    Clone,
+    Copy,
+    Debug,
+    PartialEq,
+    Eq
+)]
+pub enum EngineRefusalReason {
+    /// The engine ran and rejected the request with its typed
+    /// domain error; the rendered error text is the detail.
+    Rejected,
+    /// The engine layer could not serve the request at all.
+    Unavailable,
+}
+#[rustfmt::skip]
+impl std::fmt::Display for EngineRefusalReason {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Rejected => formatter.write_str("engine rejected the request"),
+            Self::Unavailable => formatter.write_str("engine unavailable"),
+        }
+    }
+}
+#[rustfmt::skip]
+/// The refusal reply a daemon writes when the engine failed, so
+/// the caller receives a complete typed frame instead of a closed
+/// socket it cannot distinguish from daemon death. The typed
+/// engine error stays daemon-side; the wire carries the
+/// classification plus the rendered error text.
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct EngineRefusal {
+    pub reason: EngineRefusalReason,
+    pub detail: String,
+}
+#[rustfmt::skip]
+impl EngineRefusal {
+    pub fn rejected(detail: String) -> Self {
+        Self {
+            reason: EngineRefusalReason::Rejected,
+            detail,
+        }
+    }
+    pub fn unavailable(detail: String) -> Self {
+        Self {
+            reason: EngineRefusalReason::Unavailable,
+            detail,
+        }
+    }
+    pub fn encode_signal_frame(&self) -> Result<Vec<u8>, SignalFrameError> {
+        let archive = rkyv::to_bytes::<rkyv::rancor::Error>(self)
+            .map_err(|_| SignalFrameError::ArchiveEncode)?;
+        let mut frame = Vec::with_capacity(
+            SIGNAL_SHORT_HEADER_BYTE_COUNT + archive.len(),
+        );
+        frame.extend_from_slice(&ENGINE_REFUSAL_SHORT_HEADER.to_le_bytes());
+        frame.extend_from_slice(&archive);
+        Ok(frame)
+    }
+}
+#[rustfmt::skip]
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum SignalFrameError {
     ArchiveEncode,
@@ -1154,6 +981,7 @@ pub enum SignalFrameError {
     FrameTooShort { found: usize },
     UnknownHeader { root_enum: &'static str, header: u64 },
     HeaderMismatch { expected: u64, found: u64 },
+    EngineRefused { refusal: EngineRefusal },
 }
 #[rustfmt::skip]
 impl std::fmt::Display for SignalFrameError {
@@ -1172,6 +1000,9 @@ impl std::fmt::Display for SignalFrameError {
                     formatter,
                     "decoded payload header mismatch: expected 0x{expected:016X}, found 0x{found:016X}"
                 )
+            }
+            Self::EngineRefused { refusal } => {
+                write!(formatter, "{}: {}", refusal.reason, refusal.detail)
             }
         }
     }
@@ -1286,6 +1117,16 @@ impl Input {
         let mut header_bytes = [0_u8; SIGNAL_SHORT_HEADER_BYTE_COUNT];
         header_bytes.copy_from_slice(&frame[..SIGNAL_SHORT_HEADER_BYTE_COUNT]);
         let header = u64::from_le_bytes(header_bytes);
+        if header == ENGINE_REFUSAL_SHORT_HEADER {
+            let refusal = rkyv::from_bytes::<
+                EngineRefusal,
+                rkyv::rancor::Error,
+            >(&frame[SIGNAL_SHORT_HEADER_BYTE_COUNT..])
+                .map_err(|_| SignalFrameError::ArchiveDecode)?;
+            return Err(SignalFrameError::EngineRefused {
+                refusal,
+            });
+        }
         let route = Self::route_from_short_header(header)?;
         let value = rkyv::from_bytes::<
             Self,
@@ -1372,6 +1213,16 @@ impl Output {
         let mut header_bytes = [0_u8; SIGNAL_SHORT_HEADER_BYTE_COUNT];
         header_bytes.copy_from_slice(&frame[..SIGNAL_SHORT_HEADER_BYTE_COUNT]);
         let header = u64::from_le_bytes(header_bytes);
+        if header == ENGINE_REFUSAL_SHORT_HEADER {
+            let refusal = rkyv::from_bytes::<
+                EngineRefusal,
+                rkyv::rancor::Error,
+            >(&frame[SIGNAL_SHORT_HEADER_BYTE_COUNT..])
+                .map_err(|_| SignalFrameError::ArchiveDecode)?;
+            return Err(SignalFrameError::EngineRefused {
+                refusal,
+            });
+        }
         let route = Self::route_from_short_header(header)?;
         let value = rkyv::from_bytes::<
             Self,

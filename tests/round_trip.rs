@@ -1,10 +1,12 @@
 #![cfg(feature = "nota-text")]
 
 use meta_signal_spirit::{
-    ArchiveDatabaseTarget, ConfigureReceipt, ConfigureRequest, CriomeGateTarget, CriomeSocketPath,
-    CriomeSocketPathText, GuardianPrompt, GuardianPromptTarget, GuardianPromptText, HeadDigestHex,
-    ImportReceipt, ImportedRecords, Input, MirrorAddress, MirrorAddressText, MirrorTarget, Output,
-    RemovalCandidatesCollectedReceipt, SelectedHeadDigest, VersionedLogHead,
+    ArchiveDatabaseTarget, ConfigureReceipt, ConfigureRejection, ConfigureRejectionReason,
+    ConfigureRequest, CriomeGateTarget, CriomeSocketPath, CriomeSocketPathText, GuardianPrompt,
+    GuardianPromptTarget, GuardianPromptText, HeadDigestHex, HeadObjectHex, ImportReceipt,
+    ImportedRecords, Input, MirrorAddress, MirrorAddressText, MirrorTarget, Output,
+    RemovalCandidatesCollectedReceipt, SelectedHeadDigest, SelectedHeadObject, VersionedLogHead,
+    VersionedLogHeadObject,
 };
 use nota::{NotaDecode, NotaEncode, NotaSource};
 use signal_frame::SignalOperationHeads;
@@ -139,7 +141,10 @@ fn meta_spirit_inputs_round_trip() {
             ))
             .into(),
         }),
-        Input::import(ImportedRecords::new(Vec::new()).into()),
+        Input::import(ImportedRecords::new(Vec::new())),
+        Input::collect_removal_candidates(removal_candidate_collection()),
+        Input::ObserveHead,
+        Input::ObserveHeadObject,
     ];
 
     for input in inputs {
@@ -160,6 +165,21 @@ fn meta_spirit_outputs_round_trip() {
         Output::imported(ImportReceipt {
             record_count: RecordCount::new(0),
             database_marker: database_marker(),
+        }),
+        Output::removal_candidates_collected(removal_candidates_collected_receipt()),
+        Output::rejected(ConfigureRejection {
+            configure_rejection_reason: ConfigureRejectionReason::ArchiveTargetUnwritable,
+            database_marker: database_marker(),
+        }),
+        Output::head_observed(VersionedLogHead {
+            database_marker: database_marker(),
+            selected_head_digest: SelectedHeadDigest::new(None),
+        }),
+        Output::head_object_observed(VersionedLogHeadObject {
+            database_marker: database_marker(),
+            selected_head_object: SelectedHeadObject::new(Some(HeadObjectHex::new(
+                "0123456789abcdef".to_owned(),
+            ))),
         }),
     ];
 
@@ -211,7 +231,7 @@ fn head_observed_output_round_trips() {
 
 #[test]
 fn collect_removal_candidates_input_round_trips() {
-    let input = Input::collect_removal_candidates(removal_candidate_collection().into());
+    let input = Input::collect_removal_candidates(removal_candidate_collection());
     assert_eq!(round_trip_input(input.clone()), input);
 }
 
@@ -230,8 +250,7 @@ fn public_intent_spirit_input_round_trips_from_dependency_contract() {
 
 #[test]
 fn collect_removal_candidates_with_domain_all_round_trips() {
-    let input =
-        Input::collect_removal_candidates(universal_domain_removal_candidate_collection().into());
+    let input = Input::collect_removal_candidates(universal_domain_removal_candidate_collection());
     assert_eq!(round_trip_input(input.clone()), input);
 }
 
@@ -250,7 +269,7 @@ fn meta_spirit_canonical_examples_round_trip() {
             selected_criome_gate_target: None.into(),
             selected_guardian_prompt_target: None.into(),
         }),
-        "(Configure (Default None None None))",
+        "Configure.{Default None None None}",
     );
     round_trip_nota(
         Input::configure(ConfigureRequest {
@@ -270,12 +289,9 @@ fn meta_spirit_canonical_examples_round_trip() {
             ))
             .into(),
         }),
-        "(Configure (Default (Some (Address 100.64.0.7:7777)) (Some (Socket /run/user/1001/criome.sock)) (Some (Prompt [You are the Guardian of Spirit. Default to refusal.]))))",
+        "Configure.{Default Some.Address.100.64.0.7:7777 Some.Socket./run/user/1001/criome.sock Some.Prompt.(|You are the Guardian of Spirit. Default to refusal.|)}",
     );
-    round_trip_nota(
-        Input::import(ImportedRecords::new(Vec::new()).into()),
-        "(Import [])",
-    );
+    round_trip_nota(Input::import(ImportedRecords::new(Vec::new())), "Import.[]");
     round_trip_nota(
         Output::configured(ConfigureReceipt {
             archive_database_target: ArchiveDatabaseTarget::Default,
@@ -284,7 +300,7 @@ fn meta_spirit_canonical_examples_round_trip() {
             selected_guardian_prompt_target: None.into(),
             database_marker: database_marker(),
         }),
-        "(Configured (Default None None None (1 2)))",
+        "Configured.{Default None None None {1 2}}",
     );
 }
 
@@ -292,18 +308,18 @@ fn meta_spirit_canonical_examples_round_trip() {
 fn collect_removal_candidates_canonical_examples_round_trip() {
     round_trip_nota(
         SpiritInput::public_intent(universal_domain_scopes()),
-        "(PublicIntent [All])",
+        "PublicIntent.[All]",
     );
     round_trip_nota(
-        Input::collect_removal_candidates(removal_candidate_collection().into()),
-        "(CollectRemovalCandidates ((Any Any Any Any None Any Any Any) ([] [retire the matching candidates])))",
+        Input::collect_removal_candidates(removal_candidate_collection()),
+        "CollectRemovalCandidates.{{Any Any Any Any None Any Any Any} {[] (retire the matching candidates)}}",
     );
     round_trip_nota(
-        Input::collect_removal_candidates(universal_domain_removal_candidate_collection().into()),
-        "(CollectRemovalCandidates (((Partial [All]) Any Any Any None Any Any Any) ([] [retire universal-domain matching candidates])))",
+        Input::collect_removal_candidates(universal_domain_removal_candidate_collection()),
+        "CollectRemovalCandidates.{{Partial.[All] Any Any Any None Any Any Any} {[] (retire universal-domain matching candidates)}}",
     );
     round_trip_nota(
         Output::removal_candidates_collected(removal_candidates_collected_receipt()),
-        "(RemovalCandidatesCollected (([] [] []) (1 2)))",
+        "RemovalCandidatesCollected.{{[] [] []} {1 2}}",
     );
 }

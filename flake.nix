@@ -41,7 +41,7 @@
           test = craneLib.cargoTest (commonArguments // { inherit cargoArtifacts; });
           test-nota-text = craneLib.cargoTest (commonArguments // {
             inherit cargoArtifacts;
-            cargoTestExtraArgs = "--features nota-text --test round_trip";
+            cargoTestExtraArgs = "--all-targets --all-features";
           });
           doc = craneLib.cargoDoc (commonArguments // {
             inherit cargoArtifacts;

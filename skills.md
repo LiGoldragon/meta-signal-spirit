@@ -18,7 +18,9 @@ no actors, no sockets, no storage, and no classifier logic.
 
 ## Invariants
 
-- Supervisor lifecycle and policy orders live here, not in the ordinary spirit contract.
+- Owner configuration, import, removal-candidate collection, and head
+  observation live here, not in the ordinary spirit contract.
+- The ordinary working socket has no removal operation.
 - Every request variant is declared as a schema root in `schema/meta-signal.schema`.
 - Shared spirit nouns are imported from `signal-spirit`; do not duplicate them.
 - Runtime interpretation stays in `spirit`.
