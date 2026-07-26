@@ -77,17 +77,17 @@ daemon-side projections.
 | Owner configuration, import, removal-candidate collection, and head observation live only in the meta contract. | `wire_inventory.rs` compares both authored schemas and proves the ordinary `signal-spirit` roots have none of the owner-only variants. |
 | The ordinary working socket has no deletion or removal capability. | `wire_inventory.rs` closes `Remove` and `CollectRemovalCandidates` on ordinary Input and closes removal replies on ordinary Output. |
 | Every meta request is a contract-local verb. | `wire_inventory.rs` locks the complete authored and generated root inventory. Sema classification is daemon-side projection only. |
-| Wire identity is stable. | `wire_inventory.rs` locks all request/reply route order, short headers, and archived route tags. |
+| Wire identity is stable and contract-bound. | The build selects the build-only Protos `MetaSignalSpirit` family. Generated `ContractMarker` binds every frame to contract ID 2 and wire revision 1; `frame.rs` rejects mismatched contracts and revisions, while `wire_inventory.rs` locks all request/reply route order, bound short headers, and archived route tags. |
 | The checked-in Rust contract is generated from the current six-slot dotted/positional schema. | Every build runs the schema-rust freshness check; `wire_inventory.rs` also proves authored roots and generated heads converge. |
-| Contract code contains no runtime. | Source contains no Kameo, Tokio, redb, sockets, or sema-engine code. |
+| Contract code contains no runtime or Protos dependency. | Source contains no Kameo, Tokio, redb, sockets, or sema-engine code. Protos is build-only family data; `dependency_boundary.rs` proves it is absent from normal dependencies and generated Rust. |
 | The contract imports shared Spirit nouns instead of duplicating them. | `schema/meta-signal.schema` imports `DatabaseMarker`, `Entry`, `RecordIdentifier`, `RecordCount`, `RemovalCandidateCollection`, and `RemovalCandidatesCollection` from `signal-spirit`. |
-| One canonical micro-repository dependency world is used. | `dependency_boundary.rs` locks exact producer revisions and rejects duplicate, branch, patch, path, and legacy dependency sources. |
+| One canonical micro-repository dependency world is used. | `dependency_boundary.rs` locks exact producer revisions and rejects alternate duplicate, branch, patch, path, and legacy dependency sources. The only permitted host/target rebuild is the same immutable `signal-frame` revision. |
 
 ## Code Map
 
 ```text
 schema/meta-signal.schema — source-of-truth meta policy schema
-src/schema/meta_signal.rs — generated meta request/reply records and codecs
+src/schema/meta_signal.rs — generated meta request/reply records and contract-bound frame codec
 src/lib.rs              — generated contract re-exports and compatibility helpers
 examples/canonical.nota — meta request/reply examples plus the ordinary signal-spirit `PublicIntent` dependency witness
 tests/round_trip.rs     — rkyv frame + NOTA + verb mapping witnesses

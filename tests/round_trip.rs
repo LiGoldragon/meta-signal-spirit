@@ -2,9 +2,9 @@
 
 use meta_signal_spirit::{
     ArchiveDatabaseTarget, ConfigureReceipt, ConfigureRejection, ConfigureRejectionReason,
-    ConfigureRequest, CriomeGateTarget, CriomeSocketPath, CriomeSocketPathText, GuardianPrompt,
-    GuardianPromptTarget, GuardianPromptText, HeadDigestHex, HeadObjectHex, ImportReceipt,
-    ImportedRecords, Input, MirrorAddress, MirrorAddressText, MirrorTarget, Output,
+    ConfigureRequest, ContractMarker, CriomeGateTarget, CriomeSocketPath, CriomeSocketPathText,
+    GuardianPrompt, GuardianPromptTarget, GuardianPromptText, HeadDigestHex, HeadObjectHex,
+    ImportReceipt, ImportedRecords, Input, MirrorAddress, MirrorAddressText, MirrorTarget, Output,
     RemovalCandidatesCollectedReceipt, SelectedHeadDigest, SelectedHeadObject, VersionedLogHead,
     VersionedLogHeadObject,
 };
@@ -20,6 +20,14 @@ use signal_spirit::schema::signal::{
 };
 
 const CANONICAL: &str = include_str!("../examples/canonical.nota");
+
+fn exchange() -> signal_frame::ExchangeIdentifier {
+    signal_frame::ExchangeIdentifier::new(
+        signal_frame::SessionEpoch::new(7),
+        signal_frame::ExchangeLane::Connector,
+        signal_frame::LaneSequence::first(),
+    )
+}
 
 fn database_marker() -> DatabaseMarker {
     DatabaseMarker {
@@ -82,20 +90,35 @@ fn removal_candidates_collected_receipt() -> RemovalCandidatesCollectedReceipt {
 }
 
 fn round_trip_input(input: Input) -> Input {
-    let frame = input.encode_signal_frame().expect("encode input");
-    let (_route, decoded) = Input::decode_signal_frame(&frame).expect("decode input");
+    let frame = input
+        .encode_request_frame(exchange())
+        .expect("encode bound input");
+    let (decoded_exchange, decoded) =
+        ContractMarker::decode_single_request(&frame).expect("decode bound input");
+    assert_eq!(decoded_exchange, exchange());
     decoded
 }
 
 fn round_trip_output(output: Output) -> Output {
-    let frame = output.encode_signal_frame().expect("encode output");
-    let (_route, decoded) = Output::decode_signal_frame(&frame).expect("decode output");
-    decoded
+    let expected = output.clone().into_reply_frame(exchange());
+    let frame = output
+        .clone()
+        .encode_reply_frame(exchange())
+        .expect("encode bound output");
+    let decoded = ContractMarker::decode_frame(&frame).expect("decode bound output");
+    assert_eq!(decoded.short_header(), expected.short_header());
+    assert_eq!(decoded.into_body(), expected.into_body());
+    output
 }
 
 fn round_trip_spirit_input(input: SpiritInput) -> (SpiritInputRoute, SpiritInput) {
-    let frame = input.encode_signal_frame().expect("encode spirit input");
-    SpiritInput::decode_signal_frame(&frame).expect("decode spirit input")
+    let frame = input
+        .encode_request_frame(exchange())
+        .expect("encode bound spirit input");
+    let (decoded_exchange, decoded) = signal_spirit::ContractMarker::decode_single_request(&frame)
+        .expect("decode bound spirit input");
+    assert_eq!(decoded_exchange, exchange());
+    (decoded.route(), decoded)
 }
 
 fn round_trip_nota<Value>(value: Value, expected: &str)

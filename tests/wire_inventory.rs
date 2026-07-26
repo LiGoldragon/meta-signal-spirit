@@ -1,6 +1,6 @@
 use meta_signal_spirit::{
     Input, InputRoute, META_SIGNAL_RUST_SOURCE, META_SIGNAL_SCHEMA_SOURCE, MetaReply, MetaRequest,
-    Output, OutputRoute,
+    Output, OutputRoute, schema::meta_signal::short_header,
 };
 use signal_frame::SignalOperationHeads;
 use std::marker::PhantomData;
@@ -28,6 +28,23 @@ const OUTPUT_ROUTES: [(&str, OutputRoute); 6] = [
     ("HeadObjectObserved", OutputRoute::HeadObjectObserved),
 ];
 
+const INPUT_HEADERS: [u64; 5] = [
+    short_header::INPUT_CONFIGURE,
+    short_header::INPUT_IMPORT,
+    short_header::INPUT_COLLECT_REMOVAL_CANDIDATES,
+    short_header::INPUT_OBSERVE_HEAD,
+    short_header::INPUT_OBSERVE_HEAD_OBJECT,
+];
+
+const OUTPUT_HEADERS: [u64; 6] = [
+    short_header::OUTPUT_CONFIGURED,
+    short_header::OUTPUT_IMPORTED,
+    short_header::OUTPUT_REMOVAL_CANDIDATES_COLLECTED,
+    short_header::OUTPUT_REJECTED,
+    short_header::OUTPUT_HEAD_OBSERVED,
+    short_header::OUTPUT_HEAD_OBJECT_OBSERVED,
+];
+
 #[test]
 fn complete_owner_route_header_and_archive_tag_inventory_is_stable() {
     assert_eq!(
@@ -38,11 +55,11 @@ fn complete_owner_route_header_and_archive_tag_inventory_is_stable() {
             .collect::<Vec<_>>()
     );
 
-    for (index, (_, route)) in INPUT_ROUTES.iter().enumerate() {
-        let expected_header = (index as u64) << 48;
+    for (index, ((_, route), header)) in INPUT_ROUTES.iter().zip(INPUT_HEADERS).enumerate() {
+        let expected_header = ((index as u64) << 48) | 0x0000_0001_0000_0002;
         assert_eq!(
-            Input::route_from_short_header(expected_header).expect("known Input header"),
-            *route
+            header, expected_header,
+            "Input route header at index {index} moved"
         );
         let archived =
             rkyv::to_bytes::<rkyv::rancor::Error>(route).expect("archive Input route tag");
@@ -53,11 +70,11 @@ fn complete_owner_route_header_and_archive_tag_inventory_is_stable() {
         );
     }
 
-    for (index, (_, route)) in OUTPUT_ROUTES.iter().enumerate() {
-        let expected_header = (0x0100_u64 + index as u64) << 48;
+    for (index, ((_, route), header)) in OUTPUT_ROUTES.iter().zip(OUTPUT_HEADERS).enumerate() {
+        let expected_header = ((0x0100_u64 + index as u64) << 48) | 0x0000_0001_0000_0002;
         assert_eq!(
-            Output::route_from_short_header(expected_header).expect("known Output header"),
-            *route
+            header, expected_header,
+            "Output route header at index {index} moved"
         );
         let archived =
             rkyv::to_bytes::<rkyv::rancor::Error>(route).expect("archive Output route tag");

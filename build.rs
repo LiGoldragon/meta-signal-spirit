@@ -1,5 +1,6 @@
 use std::{env, path::PathBuf};
 
+use protos::WireContractFamily;
 use schema_rust::build::{
     CargoSchemaMetadata, DependencySchema, GenerationDriver, GenerationPlan, ModuleEmission,
 };
@@ -36,7 +37,10 @@ impl SchemaBuild {
         let plan = GenerationPlan::new(&self.crate_root, "meta-signal-spirit", "0.7.1")
             .with_optional_dependency_schema(signal_domain)
             .with_dependency_schema(signal_spirit)
-            .with_module(ModuleEmission::wire_contract_module("meta-signal"));
+            .with_module(ModuleEmission::wire_contract_module(
+                "meta-signal",
+                WireContractFamily::MetaSignalSpirit,
+            ));
 
         GenerationDriver::new(plan)
             .generate()
