@@ -29,8 +29,11 @@ The old `Mutate StartOrder` / `Mutate DrainAndStopOrder` /
 `Mutate ReloadBootstrapPolicyOrder` / `Mutate RegisterIdentity` /
 `Retract RetireIdentity` shape is retired. The later hand-written
 `Start` / `Drain` / `Reload` / `Register` / `Retire` placeholder surface is
-also retired. The live contract is schema-derived and carries the owner-only
-`Configure` / `Import` surface used by `spirit`.
+also retired. The live contract carries the owner-only `Configure` / `Import`
+surface used by `spirit`, generated through the current wired-legacy
+schema/schema-rust pipeline — the language was renamed Ethos on 2026-07-27
+(S1R entry 7), legacy schema, schema-language, and schema-rust die under
+their old names, and this crate's generation has not yet been ported.
 
 ## Contract Surface
 
