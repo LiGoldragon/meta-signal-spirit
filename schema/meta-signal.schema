@@ -3,18 +3,14 @@
   Entry signal-spirit:signal:Entry
   RecordIdentifier signal-spirit:signal:RecordIdentifier
   RecordCount signal-spirit:signal:RecordCount
-  RemovalCandidateCollection signal-spirit:signal:RemovalCandidateCollection
-  RemovalCandidatesCollection signal-spirit:signal:RemovalCandidatesCollection
 }
-[Configure Import CollectRemovalCandidates ObserveHead ObserveHeadObject]
-[Configured Imported RemovalCandidatesCollected Rejected HeadObserved HeadObjectObserved]
+[Configure Import ObserveHead ObserveHeadObject]
+[Configured Imported Rejected HeadObserved HeadObjectObserved]
 {
   Configure ConfigureRequest
   Import ImportRequest
-  CollectRemovalCandidates CollectRemovalCandidatesRequest
   Configured ConfigureReceipt
   Imported ImportReceipt
-  RemovalCandidatesCollected RemovalCandidatesCollectedReceipt
   Rejected ConfigureRejection
   HeadObserved VersionedLogHead
   HeadObjectObserved VersionedLogHeadObject
@@ -47,9 +43,6 @@
   ImportedRecords (Vec ImportedRecord)
   ImportRequest { ImportedRecords }
   ImportReceipt { RecordCount DatabaseMarker }
-
-  CollectRemovalCandidatesRequest { RemovalCandidateCollection }
-  RemovalCandidatesCollectedReceipt { RemovalCandidatesCollection DatabaseMarker }
 
   HeadDigestHex String
   SelectedHeadDigest (Optional HeadDigestHex)

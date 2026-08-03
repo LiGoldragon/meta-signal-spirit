@@ -4,17 +4,13 @@ use meta_signal_spirit::{
     ArchiveDatabaseTarget, ConfigureReceipt, ConfigureRequest, CriomeGateTarget, CriomeSocketPath,
     CriomeSocketPathText, GuardianPrompt, GuardianPromptTarget, GuardianPromptText, HeadDigestHex,
     ImportReceipt, ImportedRecords, Input, MirrorAddress, MirrorAddressText, MirrorTarget, Output,
-    RemovalCandidatesCollectedReceipt, SelectedHeadDigest, VersionedLogHead,
+    SelectedHeadDigest, VersionedLogHead,
 };
 use nota::{NotaDecode, NotaEncode, NotaSource};
 use signal_frame::SignalOperationHeads;
-use signal_spirit::schema::signal::{
-    CertaintySelection, CommitSequence, DatabaseMarker, Domain, DomainMatch, DomainScope,
-    DomainScopes, ImportanceSelection, Input as SpiritInput, InputRoute as SpiritInputRoute,
-    Justification, KeywordMatch, OperationKind, PrivacySelection, Query, Reasoning, RecordCount,
-    RecordQuery, ReferentSelection, RemovalArchiveRecords, RemovalCandidateCollection,
-    RemovalCandidatesCollection, RemovedIdentifiers, SelectedKind, SkippedRemovalCandidates,
-    StateDigest, TextMatch,
+use signal_spirit::{
+    CommitSequence, DatabaseMarker, Domain, DomainScope, DomainScopes, Input as SpiritInput,
+    InputRoute as SpiritInputRoute, OperationKind, RecordCount, StateDigest,
 };
 
 const CANONICAL: &str = include_str!("../examples/canonical.nota");
@@ -26,57 +22,8 @@ fn database_marker() -> DatabaseMarker {
     }
 }
 
-fn removal_candidate_collection() -> RemovalCandidateCollection {
-    RemovalCandidateCollection {
-        record_query: RecordQuery::new(Query {
-            domain_match: DomainMatch::Any,
-            keyword_match: KeywordMatch::Any,
-            text_match: TextMatch::Any,
-            referent_selection: ReferentSelection::Any,
-            selected_kind: SelectedKind::new(None),
-            privacy_selection: PrivacySelection::Any,
-            certainty_selection: CertaintySelection::Any,
-            importance_selection: ImportanceSelection::Any,
-        }),
-        justification: Justification {
-            testimony: Vec::new().into(),
-            reasoning: Reasoning::new("retire the matching candidates".to_owned()),
-        },
-    }
-}
-
 fn universal_domain_scopes() -> DomainScopes {
     DomainScopes::new(vec![DomainScope::from(Domain::All)])
-}
-
-fn universal_domain_removal_candidate_collection() -> RemovalCandidateCollection {
-    RemovalCandidateCollection {
-        record_query: RecordQuery::new(Query {
-            domain_match: DomainMatch::partial(universal_domain_scopes()),
-            keyword_match: KeywordMatch::Any,
-            text_match: TextMatch::Any,
-            referent_selection: ReferentSelection::Any,
-            selected_kind: SelectedKind::new(None),
-            privacy_selection: PrivacySelection::Any,
-            certainty_selection: CertaintySelection::Any,
-            importance_selection: ImportanceSelection::Any,
-        }),
-        justification: Justification {
-            testimony: Vec::new().into(),
-            reasoning: Reasoning::new("retire universal-domain matching candidates".to_owned()),
-        },
-    }
-}
-
-fn removal_candidates_collected_receipt() -> RemovalCandidatesCollectedReceipt {
-    RemovalCandidatesCollectedReceipt {
-        removal_candidates_collection: RemovalCandidatesCollection {
-            removal_archive_records: RemovalArchiveRecords::new(Vec::new()),
-            removed_identifiers: RemovedIdentifiers::new(Vec::new()),
-            skipped_removal_candidates: SkippedRemovalCandidates::new(Vec::new()),
-        },
-        database_marker: database_marker(),
-    }
 }
 
 fn round_trip_input(input: Input) -> Input {
@@ -91,55 +38,45 @@ fn round_trip_output(output: Output) -> Output {
     decoded
 }
 
-fn round_trip_spirit_input(input: SpiritInput) -> (SpiritInputRoute, SpiritInput) {
-    let frame = input.encode_signal_frame().expect("encode spirit input");
-    SpiritInput::decode_signal_frame(&frame).expect("decode spirit input")
-}
-
 fn round_trip_nota<Value>(value: Value, expected: &str)
 where
     Value: NotaEncode + NotaDecode + PartialEq + std::fmt::Debug,
 {
     let encoded = value.to_nota();
     assert_eq!(encoded, expected);
-
-    let recovered = NotaSource::new(&encoded)
-        .parse::<Value>()
-        .expect("decode nota text");
-    assert_eq!(recovered, value);
-    assert!(
-        CANONICAL.contains(expected),
-        "examples/canonical.nota missing line: {expected}"
+    assert_eq!(
+        NotaSource::new(&encoded)
+            .parse::<Value>()
+            .expect("decode text projection"),
+        value
     );
+    assert!(CANONICAL.contains(expected));
 }
 
 #[test]
 fn meta_spirit_inputs_round_trip() {
     let inputs = [
-        Input::configure(ConfigureRequest {
-            archive_database_target: ArchiveDatabaseTarget::Default,
-            selected_mirror_target: None.into(),
-            selected_criome_gate_target: None.into(),
-            selected_guardian_prompt_target: None.into(),
-        }),
-        Input::configure(ConfigureRequest {
-            archive_database_target: ArchiveDatabaseTarget::Default,
-            selected_mirror_target: Some(MirrorTarget::Address(MirrorAddress::new(
+        Input::configure(ConfigureRequest::new(
+            ArchiveDatabaseTarget::Default,
+            None,
+            None,
+            None,
+        )),
+        Input::configure(ConfigureRequest::new(
+            ArchiveDatabaseTarget::Default,
+            Some(MirrorTarget::Address(MirrorAddress::new(
                 MirrorAddressText::new("100.64.0.7:7777"),
-            )))
-            .into(),
-            selected_criome_gate_target: Some(CriomeGateTarget::Socket(CriomeSocketPath::new(
+            ))),
+            Some(CriomeGateTarget::Socket(CriomeSocketPath::new(
                 CriomeSocketPathText::new("/run/user/1001/criome.sock"),
-            )))
-            .into(),
-            selected_guardian_prompt_target: Some(GuardianPromptTarget::Prompt(
-                GuardianPrompt::new(GuardianPromptText::new(
-                    "You are the Guardian of Spirit. Default to refusal.",
-                )),
-            ))
-            .into(),
-        }),
+            ))),
+            Some(GuardianPromptTarget::Prompt(GuardianPrompt::new(
+                GuardianPromptText::new("You are the Guardian of Spirit. Default to refusal."),
+            ))),
+        )),
         Input::import(ImportedRecords::new(Vec::new()).into()),
+        Input::ObserveHead,
+        Input::ObserveHeadObject,
     ];
 
     for input in inputs {
@@ -150,16 +87,22 @@ fn meta_spirit_inputs_round_trip() {
 #[test]
 fn meta_spirit_outputs_round_trip() {
     let outputs = [
-        Output::configured(ConfigureReceipt {
-            archive_database_target: ArchiveDatabaseTarget::Default,
-            selected_mirror_target: None.into(),
-            selected_criome_gate_target: None.into(),
-            selected_guardian_prompt_target: None.into(),
-            database_marker: database_marker(),
-        }),
+        Output::configured(ConfigureReceipt::new(
+            ArchiveDatabaseTarget::Default,
+            None,
+            None,
+            None,
+            database_marker(),
+        )),
         Output::imported(ImportReceipt {
             record_count: RecordCount::new(0),
             database_marker: database_marker(),
+        }),
+        Output::head_observed(VersionedLogHead {
+            database_marker: database_marker(),
+            selected_head_digest: SelectedHeadDigest::new(Some(HeadDigestHex::new(
+                "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+            ))),
         }),
     ];
 
@@ -169,141 +112,65 @@ fn meta_spirit_outputs_round_trip() {
 }
 
 #[test]
-fn meta_spirit_request_variants_are_contract_local_verbs() {
+fn revision_2_request_variants_are_contract_local_verbs() {
     assert_eq!(
         Input::HEADS,
-        &[
-            "Configure",
-            "Import",
-            "CollectRemovalCandidates",
-            "ObserveHead",
-            "ObserveHeadObject"
-        ]
+        &["Configure", "Import", "ObserveHead", "ObserveHeadObject"]
     );
 }
 
 #[test]
-fn observe_head_input_round_trips() {
-    let input = Input::ObserveHead;
-    assert_eq!(round_trip_input(input.clone()), input);
-}
+fn intent_dependency_round_trips_from_the_exact_signal_revision() {
+    let input = SpiritInput::intent(universal_domain_scopes());
+    let frame = input.encode_signal_frame().expect("encode spirit input");
+    let (route, decoded) = SpiritInput::decode_signal_frame(&frame).expect("decode spirit input");
 
-#[test]
-fn head_observed_output_round_trips() {
-    // A seeded store reports a present content head: the 32-byte EntryDigest's
-    // lowercase-hex form (64 chars), the exact form the router-forward-witness
-    // ingests as `HEAD_DIGEST_HEX` and that criome's ObjectDigest also carries.
-    let present = Output::head_observed(VersionedLogHead {
-        database_marker: database_marker(),
-        selected_head_digest: SelectedHeadDigest::new(Some(HeadDigestHex::new(
-            "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a".to_owned(),
-        ))),
-    });
-    assert_eq!(round_trip_output(present.clone()), present);
-
-    // An empty store reports no head — the optional digest is the honest absence.
-    let absent = Output::head_observed(VersionedLogHead {
-        database_marker: database_marker(),
-        selected_head_digest: SelectedHeadDigest::new(None),
-    });
-    assert_eq!(round_trip_output(absent.clone()), absent);
-}
-
-#[test]
-fn collect_removal_candidates_input_round_trips() {
-    let input = Input::collect_removal_candidates(removal_candidate_collection().into());
-    assert_eq!(round_trip_input(input.clone()), input);
-}
-
-#[test]
-fn public_intent_spirit_input_round_trips_from_dependency_contract() {
-    let input = SpiritInput::public_intent(universal_domain_scopes());
-    let (route, decoded) = round_trip_spirit_input(input.clone());
-
-    assert_eq!(route, SpiritInputRoute::PublicIntent);
+    assert_eq!(route, SpiritInputRoute::Intent);
     assert_eq!(decoded, input);
-    assert_eq!(
-        OperationKind::from_input(&input),
-        OperationKind::PublicIntent
-    );
+    assert_eq!(OperationKind::from_input(&input), OperationKind::Intent);
 }
 
 #[test]
-fn collect_removal_candidates_with_domain_all_round_trips() {
-    let input =
-        Input::collect_removal_candidates(universal_domain_removal_candidate_collection().into());
-    assert_eq!(round_trip_input(input.clone()), input);
-}
-
-#[test]
-fn removal_candidates_collected_output_round_trips() {
-    let output = Output::removal_candidates_collected(removal_candidates_collected_receipt());
-    assert_eq!(round_trip_output(output.clone()), output);
-}
-
-#[test]
-fn meta_spirit_canonical_examples_round_trip() {
+fn canonical_text_projection_round_trips() {
     round_trip_nota(
-        Input::configure(ConfigureRequest {
-            archive_database_target: ArchiveDatabaseTarget::Default,
-            selected_mirror_target: None.into(),
-            selected_criome_gate_target: None.into(),
-            selected_guardian_prompt_target: None.into(),
-        }),
+        Input::configure(ConfigureRequest::new(
+            ArchiveDatabaseTarget::Default,
+            None,
+            None,
+            None,
+        )),
         "(Configure (Default None None None))",
-    );
-    round_trip_nota(
-        Input::configure(ConfigureRequest {
-            archive_database_target: ArchiveDatabaseTarget::Default,
-            selected_mirror_target: Some(MirrorTarget::Address(MirrorAddress::new(
-                MirrorAddressText::new("100.64.0.7:7777"),
-            )))
-            .into(),
-            selected_criome_gate_target: Some(CriomeGateTarget::Socket(CriomeSocketPath::new(
-                CriomeSocketPathText::new("/run/user/1001/criome.sock"),
-            )))
-            .into(),
-            selected_guardian_prompt_target: Some(GuardianPromptTarget::Prompt(
-                GuardianPrompt::new(GuardianPromptText::new(
-                    "You are the Guardian of Spirit. Default to refusal.",
-                )),
-            ))
-            .into(),
-        }),
-        "(Configure (Default (Some (Address 100.64.0.7:7777)) (Some (Socket /run/user/1001/criome.sock)) (Some (Prompt [You are the Guardian of Spirit. Default to refusal.]))))",
     );
     round_trip_nota(
         Input::import(ImportedRecords::new(Vec::new()).into()),
         "(Import [])",
     );
     round_trip_nota(
-        Output::configured(ConfigureReceipt {
-            archive_database_target: ArchiveDatabaseTarget::Default,
-            selected_mirror_target: None.into(),
-            selected_criome_gate_target: None.into(),
-            selected_guardian_prompt_target: None.into(),
-            database_marker: database_marker(),
-        }),
+        SpiritInput::intent(universal_domain_scopes()),
+        "(Intent [All])",
+    );
+    round_trip_nota(
+        Output::configured(ConfigureReceipt::new(
+            ArchiveDatabaseTarget::Default,
+            None,
+            None,
+            None,
+            database_marker(),
+        )),
         "(Configured (Default None None None (1 2)))",
     );
 }
 
 #[test]
-fn collect_removal_candidates_canonical_examples_round_trip() {
-    round_trip_nota(
-        SpiritInput::public_intent(universal_domain_scopes()),
-        "(PublicIntent [All])",
+fn revision_1_collection_syntax_fails_to_decode() {
+    assert!(
+        NotaSource::new("(CollectRemovalCandidates ignored)")
+            .parse::<Input>()
+            .is_err()
     );
-    round_trip_nota(
-        Input::collect_removal_candidates(removal_candidate_collection().into()),
-        "(CollectRemovalCandidates ((Any Any Any Any None Any Any Any) ([] [retire the matching candidates])))",
-    );
-    round_trip_nota(
-        Input::collect_removal_candidates(universal_domain_removal_candidate_collection().into()),
-        "(CollectRemovalCandidates (((Partial [All]) Any Any Any None Any Any Any) ([] [retire universal-domain matching candidates])))",
-    );
-    round_trip_nota(
-        Output::removal_candidates_collected(removal_candidates_collected_receipt()),
-        "(RemovalCandidatesCollected (([] [] []) (1 2)))",
+    assert!(
+        NotaSource::new("(RemovalCandidatesCollected ignored)")
+            .parse::<Output>()
+            .is_err()
     );
 }

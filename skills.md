@@ -21,4 +21,7 @@ no actors, no sockets, no storage, and no classifier logic.
 - Supervisor lifecycle and policy orders live here, not in the ordinary spirit contract.
 - Every request variant is declared as a schema root in `schema/meta-signal.schema`.
 - Shared spirit nouns are imported from `signal-spirit`; do not duplicate them.
+- Version 0.8.0 is wire revision 2 and imports only four-field v14 entries.
+- The request roots are `Configure`, `Import`, `ObserveHead`, and
+  `ObserveHeadObject`; do not add compatibility forms or defaults.
 - Runtime interpretation stays in `spirit`.

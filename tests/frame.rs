@@ -1,36 +1,30 @@
-use meta_signal_spirit::{ArchiveDatabaseTarget, ConfigureRequest, Input};
+use meta_signal_spirit::{
+    ArchiveDatabaseTarget, ConfigureRequest, ImportedRecord, ImportedRecords, Input,
+};
 use signal_spirit::{
-    CertaintySelection, Domain, DomainMatch, DomainScope, DomainScopes, ImportanceSelection,
-    Input as SpiritInput, InputRoute as SpiritInputRoute, Justification, KeywordMatch,
-    OperationKind, PrivacySelection, Query, Reasoning, RecordQuery, ReferentSelection,
-    RemovalCandidateCollection, SelectedKind, TextMatch,
+    Description, Domain, DomainScope, DomainScopes, Domains, Entry, Importance,
+    Input as SpiritInput, InputRoute as SpiritInputRoute, Kind, Magnitude, OperationKind,
+    RecordIdentifier,
 };
 
 fn universal_domain_scopes() -> DomainScopes {
     DomainScopes::new(vec![DomainScope::from(Domain::All)])
 }
 
-fn universal_domain_removal_candidate_collection() -> RemovalCandidateCollection {
-    RemovalCandidateCollection {
-        record_query: RecordQuery::new(Query {
-            domain_match: DomainMatch::partial(universal_domain_scopes()),
-            keyword_match: KeywordMatch::Any,
-            text_match: TextMatch::Any,
-            referent_selection: ReferentSelection::Any,
-            selected_kind: SelectedKind::new(None),
-            privacy_selection: PrivacySelection::Any,
-            certainty_selection: CertaintySelection::Any,
-            importance_selection: ImportanceSelection::Any,
-        }),
-        justification: Justification {
-            testimony: Vec::new().into(),
-            reasoning: Reasoning::new("retire universal-domain matching candidates".to_owned()),
+fn imported_records() -> ImportedRecords {
+    ImportedRecords::new(vec![ImportedRecord {
+        record_identifier: RecordIdentifier::new("0001"),
+        entry: Entry {
+            domains: Domains::new(vec![Domain::All]),
+            kind: Kind::Decision,
+            description: Description::new("four-field revision-2 import"),
+            importance: Importance::new(Magnitude::Medium),
         },
-    }
+    }])
 }
 
 #[test]
-fn default_build_round_trips_meta_request_without_nota_text() {
+fn default_build_round_trips_configure_without_text_projection() {
     let request = Input::configure(ConfigureRequest::new(
         ArchiveDatabaseTarget::Default,
         None,
@@ -45,9 +39,8 @@ fn default_build_round_trips_meta_request_without_nota_text() {
 }
 
 #[test]
-fn default_build_round_trips_domain_all_imported_query_without_nota_text() {
-    let request =
-        Input::collect_removal_candidates(universal_domain_removal_candidate_collection().into());
+fn default_build_round_trips_four_field_import_without_text_projection() {
+    let request = Input::import(imported_records().into());
 
     let bytes = request.encode_signal_frame().expect("encode request");
     let (_route, decoded) = Input::decode_signal_frame(&bytes).expect("decode request");
@@ -56,16 +49,21 @@ fn default_build_round_trips_domain_all_imported_query_without_nota_text() {
 }
 
 #[test]
-fn default_build_round_trips_public_intent_dependency_without_nota_text() {
-    let request = SpiritInput::public_intent(universal_domain_scopes());
+fn default_build_round_trips_intent_dependency_without_text_projection() {
+    let request = SpiritInput::intent(universal_domain_scopes());
 
     let bytes = request.encode_signal_frame().expect("encode request");
     let (route, decoded) = SpiritInput::decode_signal_frame(&bytes).expect("decode request");
 
-    assert_eq!(route, SpiritInputRoute::PublicIntent);
+    assert_eq!(route, SpiritInputRoute::Intent);
     assert_eq!(decoded, request);
-    assert_eq!(
-        OperationKind::from_input(&request),
-        OperationKind::PublicIntent
-    );
+    assert_eq!(OperationKind::from_input(&request), OperationKind::Intent);
+}
+
+#[test]
+fn active_meta_schema_and_generated_contract_exclude_retired_collection_vocabulary() {
+    for removed in ["RemovalCandidate", "CollectRemovalCandidates"] {
+        assert!(!meta_signal_spirit::META_SIGNAL_SCHEMA_SOURCE.contains(removed));
+        assert!(!meta_signal_spirit::META_SIGNAL_RUST_SOURCE.contains(removed));
+    }
 }
