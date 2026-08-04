@@ -16,3 +16,9 @@ guardian calls, and lowering remain in `spirit`.
 
 The default build is binary-only over `signal-frame`. Enable `nota-text` only
 for examples, CLI-edge projection, and text round-trip tests.
+
+`examples/canonical.nota` contains owner objects, not shell syntax. Its final
+ordinary `Intent` line is explicitly a dependency-codec witness, not a
+`meta-spirit` transcript. The public `meta-spirit` CLI accepts exactly one
+owner object; `ObserveHead` and `ObserveHeadObject` are bare objects, while
+paths and Unix flags are invalid.

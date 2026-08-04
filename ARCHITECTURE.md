@@ -22,6 +22,12 @@ migration. `schema/meta-signal.schema` is authoritative and
 `src/schema/meta_signal.rs` is generated. Default builds are binary/rkyv-only;
 `nota-text` is an explicit edge projection.
 
+The public `meta-spirit` executable sends one owner object over the owner-only
+socket. It has no flag or file-path alternate grammar. The canonical examples
+include one explicitly labeled ordinary `Intent` dependency-codec witness;
+ordinary operations otherwise belong to `signal-spirit` and are not
+`meta-spirit` transcripts.
+
 Tests must prove the four request roots, four-field import round trips, exact
 dependency pin, generated/schema convergence, rejected revision-1 collection
 syntax, and absence of retired collection vocabulary from active artifacts.
