@@ -1,0 +1,9 @@
+Interface.{1 0 0}
+[signal/spirit.[RecordCount RecordIdentifier Entry DatabaseMarker]]
+{
+  [ObserveHead.Unit Configure.ConfigureRequest ObserveHeadObject.Unit Import.ImportRequest]
+  [Configured.ConfigureReceipt HeadObserved.VersionedLogHead HeadObjectObserved.VersionedLogHeadObject Rejected.ConfigureRejection Imported.ImportReceipt]
+  []
+  []
+  [CriomeSocketPath.{CriomeSocketPathText} VersionedLogHeadObject.{DatabaseMarker SelectedHeadObject} ArchiveDatabaseTarget.[Path.ArchivePath Default] HeadDigestHex.String MirrorAddressText.String ConfigureRequest.{ArchiveDatabaseTarget SelectedMirrorTarget SelectedCriomeGateTarget SelectedGuardianPromptTarget} SelectedMirrorTarget.Option<MirrorTarget> CriomeGateTarget.[Default Socket.CriomeSocketPath] SelectedHeadObject.Option<HeadObjectHex> SelectedHeadDigest.Option<HeadDigestHex> ArchivePathText.String HeadObjectHex.String GuardianPromptTarget.[Prompt.GuardianPrompt Default] ImportedRecords.Vector<ImportedRecord> GuardianPrompt.{GuardianPromptText} ImportedRecord.{RecordIdentifier Entry} ConfigureReceipt.{ArchiveDatabaseTarget SelectedMirrorTarget SelectedCriomeGateTarget SelectedGuardianPromptTarget DatabaseMarker} ConfigureRejectionReason.[ArchiveTargetUnwritable InternalError] MirrorTarget.[Address.MirrorAddress Default] SelectedCriomeGateTarget.Option<CriomeGateTarget> VersionedLogHead.{DatabaseMarker SelectedHeadDigest} GuardianPromptText.String ImportRequest.{ImportedRecords} SelectedGuardianPromptTarget.Option<GuardianPromptTarget> ConfigureRejection.{ConfigureRejectionReason DatabaseMarker} CriomeSocketPathText.String ImportReceipt.{RecordCount DatabaseMarker} ArchivePath.{ArchivePathText} MirrorAddress.{MirrorAddressText}]
+}
