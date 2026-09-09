@@ -15,13 +15,13 @@ name = "meta_signal_spirit"
 path = "src/lib.rs"
 
 [features]
-default = ["datom"]
+default = []
 datom = ["dep:datom-codec"]
 
 [dependencies]
 signal-domain = { git = "https://github.com/LiGoldragon/signal-domain.git", rev = "cc97101ebaff3173b55dd014bf1dda511534e011", default-features = false }
 signal-spirit = { git = "https://github.com/LiGoldragon/signal-spirit.git", rev = "d3690ae", default-features = false }
-datom-codec = { git = "https://github.com/LiGoldragon/datom-codec.git", rev = "f0aeeaa8ea8bdbbd0b9d7b96a35e9e3b3e4a9452", optional = true }
+datom-codec = { git = "https://github.com/LiGoldragon/datom-codec.git", rev = "cd0255d774847826d53d063ab856ebe0dd09e250", optional = true }
 
 [build-dependencies]
 name-table = { git = "https://github.com/LiGoldragon/name-table.git", rev = "7dd5db15c16b4246c83d049c759415d3252a7d43" }
