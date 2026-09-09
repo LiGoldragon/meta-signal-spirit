@@ -1,6 +1,6 @@
 [package]
 name         = "meta-signal-spirit"
-version      = "0.9.0"
+version      = "0.10.0"
 edition      = "2024"
 rust-version = "1.89"
 license      = "MIT OR Apache-2.0"
@@ -14,10 +14,14 @@ build        = "build.rs"
 name = "meta_signal_spirit"
 path = "src/lib.rs"
 
+[features]
+default = ["datom"]
+datom = ["dep:datom-codec"]
+
 [dependencies]
 signal-domain = { git = "https://github.com/LiGoldragon/signal-domain.git", rev = "cc97101ebaff3173b55dd014bf1dda511534e011", default-features = false }
 signal-spirit = { git = "https://github.com/LiGoldragon/signal-spirit.git", rev = "d3690ae", default-features = false }
-protos = { git = "https://github.com/LiGoldragon/protos.git", rev = "d06c4a9" }
+datom-codec = { git = "https://github.com/LiGoldragon/datom-codec.git", rev = "f0aeeaa8ea8bdbbd0b9d7b96a35e9e3b3e4a9452", optional = true }
 
 [build-dependencies]
 name-table = { git = "https://github.com/LiGoldragon/name-table.git", rev = "7dd5db15c16b4246c83d049c759415d3252a7d43" }
