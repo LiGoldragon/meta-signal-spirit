@@ -1,6 +1,6 @@
 [package]
 name         = "meta-signal-spirit"
-version      = "0.10.0"
+version      = "1.0.0"
 edition      = "2024"
 rust-version = "1.89"
 license      = "MIT OR Apache-2.0"
@@ -16,19 +16,16 @@ path = "src/lib.rs"
 
 [features]
 default = []
-datom = ["dep:datom-codec"]
+datom = ["dep:datom-codec", "dep:protos", "signal-spirit/datom"]
 
 [dependencies]
-signal-domain = { git = "https://github.com/LiGoldragon/signal-domain.git", rev = "cc97101ebaff3173b55dd014bf1dda511534e011", default-features = false }
-signal-spirit = { git = "https://github.com/LiGoldragon/signal-spirit.git", rev = "d3690ae", default-features = false }
-datom-codec = { git = "https://github.com/LiGoldragon/datom-codec.git", rev = "cd0255d774847826d53d063ab856ebe0dd09e250", optional = true }
+signal-spirit = { git = "https://github.com/LiGoldragon/signal-spirit.git", rev = "664be34aefa8e1cba638b5a4992b4487dcb0275f", default-features = false }
+datom-codec = { git = "https://github.com/LiGoldragon/datom-codec", rev = "2dad91afce6237d772767bd4ab19f31276e6999e", optional = true }
 
+protos = { git = "https://github.com/LiGoldragon/protos", rev = "aac95b0d08a4c7eb7f73c8ea18309f9e2e89315f", optional = true }
+rkyv = { version = "0.8", default-features = false, features = ["std", "bytecheck", "little_endian", "pointer_width_32", "unaligned"] }
 [build-dependencies]
-name-table = { git = "https://github.com/LiGoldragon/name-table.git", rev = "7dd5db15c16b4246c83d049c759415d3252a7d43" }
-rust-logos = { git = "https://github.com/LiGoldragon/rust-logos.git", rev = "728647e" }
-schema-rust = { git = "https://github.com/LiGoldragon/schema-rust.git", rev = "d28ead7" }
-sema-translator = { git = "https://github.com/LiGoldragon/sema-translator.git", rev = "118d7a3", default-features = false, features = ["bootstrap"] }
-core-nomos = { git = "https://github.com/LiGoldragon/core-nomos.git", rev = "419dcba" }
+ethos-zero = { git = "https://github.com/LiGoldragon/ethos-zero", rev = "daf007296a19ad2f9c8a1e67e102b2e3f09db327" }
 
 [dev-dependencies]
 

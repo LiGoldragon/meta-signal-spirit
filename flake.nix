@@ -17,16 +17,9 @@
         rust = rust-build.lib.${system}.fromPkgs pkgs;
         inherit (rust) craneLib toolchain;
         examplesFilter = path: _type: builtins.match ".*/examples(/.*)?$" path != null;
-        schemaFilter = path: type:
-          type == "regular" &&
-          (pkgs.lib.hasSuffix ".nota" path || pkgs.lib.hasSuffix ".schema" path);
-        src = rust.cleanSource {
-          root = ./.;
-          extraFilters = [
-            examplesFilter
-            schemaFilter
-          ];
-        };
+        ethosFilter = path: type:
+          type == "regular" && pkgs.lib.hasSuffix ".ethos" path;
+        src = rust.cleanSource { root = ./.; extraFilters = [ examplesFilter ethosFilter ]; };
         cargoVendorDirectory = craneLib.vendorCargoDeps { inherit src; };
         commonArguments = {
           inherit src cargoVendorDirectory;
@@ -39,10 +32,7 @@
         checks = {
           build = craneLib.cargoBuild (commonArguments // { inherit cargoArtifacts; });
           test = craneLib.cargoTest (commonArguments // { inherit cargoArtifacts; });
-          test-nota-text = craneLib.cargoTest (commonArguments // {
-            inherit cargoArtifacts;
-            cargoTestExtraArgs = "--features nota-text --test round_trip";
-          });
+          test-datom = craneLib.cargoTest (commonArguments // { inherit cargoArtifacts; cargoTestExtraArgs = "--features datom"; });
           doc = craneLib.cargoDoc (commonArguments // {
             inherit cargoArtifacts;
             RUSTDOCFLAGS = "-D warnings";
@@ -50,11 +40,7 @@
           fmt = craneLib.cargoFmt { inherit src; };
           clippy = craneLib.cargoClippy (commonArguments // {
             inherit cargoArtifacts;
-            cargoClippyExtraArgs = "--all-targets -- -D warnings";
-          });
-          clippy-nota-text = craneLib.cargoClippy (commonArguments // {
-            inherit cargoArtifacts;
-            cargoClippyExtraArgs = "--all-targets --features nota-text -- -D warnings";
+            cargoClippyExtraArgs = "--all-targets --all-features -- -D warnings";
           });
         };
         devShells.default = pkgs.mkShell {
