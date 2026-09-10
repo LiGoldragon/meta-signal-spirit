@@ -1,6 +1,6 @@
 [package]
 name         = "meta-signal-spirit"
-version      = "1.0.0"
+version      = "1.0.1"
 edition      = "2024"
 rust-version = "1.89"
 license      = "MIT OR Apache-2.0"
@@ -19,10 +19,10 @@ default = []
 datom = ["dep:datom-codec", "dep:protos", "signal-spirit/datom"]
 
 [dependencies]
-signal-spirit = { git = "https://github.com/LiGoldragon/signal-spirit.git", rev = "664be34aefa8e1cba638b5a4992b4487dcb0275f", default-features = false }
-datom-codec = { git = "https://github.com/LiGoldragon/datom-codec", rev = "2dad91afce6237d772767bd4ab19f31276e6999e", optional = true }
+signal-spirit = { git = "https://github.com/LiGoldragon/signal-spirit.git", rev = "5d7eb2253be93c5a5a3d932ae023008b8bc71701", default-features = false }
+datom-codec = { git = "https://github.com/LiGoldragon/datom-codec", rev = "f2cc06858d38a4028c928d33323a6d682e7c222f", optional = true }
 
-protos = { git = "https://github.com/LiGoldragon/protos", rev = "aac95b0d08a4c7eb7f73c8ea18309f9e2e89315f", optional = true }
+protos = { git = "https://github.com/LiGoldragon/protos", rev = "b543678cfc8609529cea7174eb4af8a64daa54ad", optional = true }
 rkyv = { version = "0.8", default-features = false, features = ["std", "bytecheck", "little_endian", "pointer_width_32", "unaligned"] }
 [build-dependencies]
 ethos-zero = { git = "https://github.com/LiGoldragon/ethos-zero", rev = "daf007296a19ad2f9c8a1e67e102b2e3f09db327" }
