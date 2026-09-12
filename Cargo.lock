@@ -168,7 +168,7 @@ dependencies = [
 
 [[package]]
 name = "meta-signal-spirit"
-version = "2.0.0"
+version = "2.0.1"
 dependencies = [
  "datom-codec 0.25.6",
  "ethos-zero 6.1.6",
@@ -346,6 +346,7 @@ dependencies = [
 [[package]]
 name = "signal-spirit"
 version = "2.0.0"
+source = "git+https://github.com/LiGoldragon/signal-spirit?rev=e4ab10624a0ab6fce1f08cc823b1c49773ddb688#e4ab10624a0ab6fce1f08cc823b1c49773ddb688"
 dependencies = [
  "datom-codec 0.25.6",
  "ethos-zero 6.1.6",
