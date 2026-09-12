@@ -1,29 +1,20 @@
 #![allow(dead_code, non_camel_case_types, non_snake_case)]
 #[rustfmt::skip]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq)]
-#[cfg_attr(
-    feature = "datom",
-    derive(datom_codec::Datomizable, datom_codec::Compositional)
-)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
 pub struct CriomeSocketPath {
     pub criome_socket_path_text: CriomeSocketPathText,
 }
 #[rustfmt::skip]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq)]
-#[cfg_attr(
-    feature = "datom",
-    derive(datom_codec::Datomizable, datom_codec::Compositional)
-)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
 pub struct VersionedLogHeadObject {
     pub database_marker: signal_spirit::DatabaseMarker,
     pub selected_head_object: SelectedHeadObject,
 }
 #[rustfmt::skip]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq)]
-#[cfg_attr(
-    feature = "datom",
-    derive(datom_codec::Datomizable, datom_codec::Compositional)
-)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
 pub enum ArchiveDatabaseTarget {
     Path(ArchivePath),
     Default,
@@ -34,10 +25,7 @@ pub type HeadDigestHex = String;
 pub type MirrorAddressText = String;
 #[rustfmt::skip]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq)]
-#[cfg_attr(
-    feature = "datom",
-    derive(datom_codec::Datomizable, datom_codec::Compositional)
-)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
 pub struct ConfigureRequest {
     pub spirit_nexus_configuration: signal_spirit::SpiritNexusConfiguration,
     pub archive_database_target: ArchiveDatabaseTarget,
@@ -49,10 +37,7 @@ pub struct ConfigureRequest {
 pub type SelectedMirrorTarget = std::option::Option<MirrorTarget>;
 #[rustfmt::skip]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq)]
-#[cfg_attr(
-    feature = "datom",
-    derive(datom_codec::Datomizable, datom_codec::Compositional)
-)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
 pub enum CriomeGateTarget {
     Default,
     Socket(CriomeSocketPath),
@@ -67,10 +52,7 @@ pub type ArchivePathText = String;
 pub type HeadObjectHex = String;
 #[rustfmt::skip]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq)]
-#[cfg_attr(
-    feature = "datom",
-    derive(datom_codec::Datomizable, datom_codec::Compositional)
-)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
 pub enum GuardianPromptTarget {
     Prompt(GuardianPrompt),
     Default,
@@ -79,29 +61,20 @@ pub enum GuardianPromptTarget {
 pub type ImportedRecords = std::vec::Vec<ImportedRecord>;
 #[rustfmt::skip]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq)]
-#[cfg_attr(
-    feature = "datom",
-    derive(datom_codec::Datomizable, datom_codec::Compositional)
-)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
 pub struct GuardianPrompt {
     pub guardian_prompt_text: GuardianPromptText,
 }
 #[rustfmt::skip]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq)]
-#[cfg_attr(
-    feature = "datom",
-    derive(datom_codec::Datomizable, datom_codec::Compositional)
-)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
 pub struct ImportedRecord {
     pub record_identifier: signal_spirit::RecordIdentifier,
     pub entry: signal_spirit::Entry,
 }
 #[rustfmt::skip]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq)]
-#[cfg_attr(
-    feature = "datom",
-    derive(datom_codec::Datomizable, datom_codec::Compositional)
-)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
 pub struct ConfigureReceipt {
     pub spirit_nexus_configuration: signal_spirit::SpiritNexusConfiguration,
     pub archive_database_target: ArchiveDatabaseTarget,
@@ -113,10 +86,7 @@ pub struct ConfigureReceipt {
 }
 #[rustfmt::skip]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq)]
-#[cfg_attr(
-    feature = "datom",
-    derive(datom_codec::Datomizable, datom_codec::Compositional)
-)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
 pub struct ConfigurationReceipt {
     pub spirit_nexus_configuration: signal_spirit::SpiritNexusConfiguration,
     pub meta_configure_done: MetaConfigureDone,
@@ -125,20 +95,14 @@ pub struct ConfigurationReceipt {
 pub type MetaConfigureDone = bool;
 #[rustfmt::skip]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq)]
-#[cfg_attr(
-    feature = "datom",
-    derive(datom_codec::Datomizable, datom_codec::Compositional)
-)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
 pub enum ConfigureRejectionReason {
     ArchiveTargetUnwritable,
     InternalError,
 }
 #[rustfmt::skip]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq)]
-#[cfg_attr(
-    feature = "datom",
-    derive(datom_codec::Datomizable, datom_codec::Compositional)
-)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
 pub enum MirrorTarget {
     Address(MirrorAddress),
     Default,
@@ -147,10 +111,7 @@ pub enum MirrorTarget {
 pub type SelectedCriomeGateTarget = std::option::Option<CriomeGateTarget>;
 #[rustfmt::skip]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq)]
-#[cfg_attr(
-    feature = "datom",
-    derive(datom_codec::Datomizable, datom_codec::Compositional)
-)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
 pub struct VersionedLogHead {
     pub database_marker: signal_spirit::DatabaseMarker,
     pub selected_head_digest: SelectedHeadDigest,
@@ -159,10 +120,7 @@ pub struct VersionedLogHead {
 pub type GuardianPromptText = String;
 #[rustfmt::skip]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq)]
-#[cfg_attr(
-    feature = "datom",
-    derive(datom_codec::Datomizable, datom_codec::Compositional)
-)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
 pub struct ImportRequest {
     pub imported_records: ImportedRecords,
 }
@@ -170,10 +128,7 @@ pub struct ImportRequest {
 pub type SelectedGuardianPromptTarget = std::option::Option<GuardianPromptTarget>;
 #[rustfmt::skip]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq)]
-#[cfg_attr(
-    feature = "datom",
-    derive(datom_codec::Datomizable, datom_codec::Compositional)
-)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
 pub struct ConfigureRejection {
     pub configure_rejection_reason: ConfigureRejectionReason,
     pub database_marker: signal_spirit::DatabaseMarker,
@@ -182,38 +137,26 @@ pub struct ConfigureRejection {
 pub type CriomeSocketPathText = String;
 #[rustfmt::skip]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq)]
-#[cfg_attr(
-    feature = "datom",
-    derive(datom_codec::Datomizable, datom_codec::Compositional)
-)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
 pub struct ImportReceipt {
     pub record_count: signal_spirit::RecordCount,
     pub database_marker: signal_spirit::DatabaseMarker,
 }
 #[rustfmt::skip]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq)]
-#[cfg_attr(
-    feature = "datom",
-    derive(datom_codec::Datomizable, datom_codec::Compositional)
-)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
 pub struct ArchivePath {
     pub archive_path_text: ArchivePathText,
 }
 #[rustfmt::skip]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq)]
-#[cfg_attr(
-    feature = "datom",
-    derive(datom_codec::Datomizable, datom_codec::Compositional)
-)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
 pub struct MirrorAddress {
     pub mirror_address_text: MirrorAddressText,
 }
 #[rustfmt::skip]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq)]
-#[cfg_attr(
-    feature = "datom",
-    derive(datom_codec::Datomizable, datom_codec::Compositional)
-)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
 pub enum Query {
     ObserveHead,
     Configure(ConfigureRequest),
@@ -223,10 +166,7 @@ pub enum Query {
 }
 #[rustfmt::skip]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq)]
-#[cfg_attr(
-    feature = "datom",
-    derive(datom_codec::Datomizable, datom_codec::Compositional)
-)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
 pub enum Response {
     Configured(ConfigureReceipt),
     OrdinaryConfigurationReopened(ConfigurationReceipt),
