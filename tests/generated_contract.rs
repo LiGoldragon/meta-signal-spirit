@@ -1,4 +1,5 @@
-use meta_signal_spirit::{ByteViewable, Query, Restorable, Signal, Signalizable};
+use meta_signal_spirit::Query;
+use signal::{ByteViewable, Restorable, Signal, Signalizable};
 
 #[test]
 fn observe_head_round_trips_through_fresh_signal_bytes() {
