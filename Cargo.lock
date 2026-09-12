@@ -135,7 +135,7 @@ dependencies = [
 
 [[package]]
 name = "meta-signal-spirit"
-version = "3.0.0"
+version = "3.0.1"
 dependencies = [
  "datom-codec",
  "ethos-zero",
