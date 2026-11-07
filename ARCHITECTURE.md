@@ -1,37 +1,18 @@
 # meta-signal-spirit architecture
 
-`meta-signal-spirit` is the owner-only policy contract for `spirit`. Version
-0.9.0 defines wire revision 3 and depends on `signal-spirit` 0.16.0 (the
-authority-sealed generation at d3690ae).
+`meta-signal-spirit` is the owner policy contract for `spirit`. Version4.1.0
+imports the ordinary `signal-spirit`4.1.0 types.
 
-The contract owns four request roots:
+`ethos/signal.ethos` is the authored structural source. `build.rs` generates
+its Rust projection with Ethos Zero and checks it against the committed
+`src/generated/signal.rs`; `src/lib.rs` re-exports that projection.
 
-| Request | Meaning |
-|---|---|
-| `Configure` | Select lifecycle archive, mirror, Criome gate, and guardian prompt targets. |
-| `Import` | Restore pre-vetted v14 records with stable identifiers. |
-| `ObserveHead` | Observe the versioned-log head digest and database marker. |
-| `ObserveHeadObject` | Observe the versioned-log head object and database marker. |
+The five request roots are `ObserveHead`, `Configure`,
+`ReverseMetaConfiguration`, `ObserveHeadObject`, and `Import`. The six reply
+roots report configuration, reopening ordinary configuration, head and head
+object observations, configuration rejection, and imported record count.
+The contract carries typed policy/configuration and observation data;
+runtime execution and storage belong to its consumers.
 
-`schema/meta.schema` is the authoritative Interface source, rescued from the
-condemned `spirit-ethos` repository (761454c) and re-spelled to the blessed
-5-section form (typed triple version, `/` imports, empty Refusal and Stream
-sections). `build.rs` authorizes it through `SemaBootstrapAuthority` and
-generates the Rust projection through `CommitBootstrap` with deterministic
-source-digest freshness. Cross-source imports resolve by authorizing
-signal-domain and signal-spirit dependency sources first.
-
-`src/schema/meta/generated.rs` is the authority-sealed Rust projection.
-This crate contains no runtime, persistence, sockets, policy execution, or
-migration.
-
-Known generation gaps (licensed breakage per hqu.14 replacement-kills):
-- rust-logos does not yet emit `#[derive(...)]` attributes
-- rust-logos does not yet emit Display/Error for Refusal types
-- The old pipeline generated full derives, accessor methods, rkyv support,
-  signal-frame integration, nota encoding, short headers, route enums, and
-  From impls; this bare projection does not yet replicate that surface
-- Manual Debug derives and Display/Error impls bridge the Refusal trait bound
-
-Tests prove the authority-sealed source is available, imported spirit types
-resolve, and retired collection vocabulary is absent.
+The selected producer cohort and the bounded historical archive/frame/text
+witnesses for4.1.0 are documented in `UPGRADES.md`.

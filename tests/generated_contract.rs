@@ -20,7 +20,7 @@ fn observe_head_round_trips_as_datom_text() {
         pending
             .actualize(&mut Budget {
                 remaining: 1024,
-                reader: ReaderBudget { remaining: 1024 },
+                reader: ReaderBudget::try_from(1024).expect("bounded reader budget"),
                 depth: 0,
                 maximum_depth: 1024
             })
@@ -31,11 +31,18 @@ fn observe_head_round_trips_as_datom_text() {
 
 fn daemon_configuration() -> signal_spirit::SpiritNexusConfiguration {
     signal_spirit::SpiritNexusConfiguration {
-        socket_path: "/run/spirit/ordinary.sock".into(),
-        optional_meta_socket_path: Some("/run/spirit/meta.sock".into()),
-        optional_trace_socket_path: None,
+        socket_path: signal_spirit::SocketPath(signal_spirit::ConfigurationPath(
+            "/run/spirit/ordinary.sock".into(),
+        )),
+        optional_meta_socket_path: signal_spirit::OptionalMetaSocketPath(Some(
+            signal_spirit::MetaSocketPath(signal_spirit::ConfigurationPath(
+                "/run/spirit/meta.sock".into(),
+            )),
+        )),
+        optional_trace_socket_path: signal_spirit::OptionalTraceSocketPath(None),
         authorization_mode: signal_spirit::AuthorizationMode::Gating,
-        optional_spirit_guardian_agent_configuration: None,
+        optional_spirit_guardian_agent_configuration:
+            signal_spirit::OptionalSpiritGuardianAgentConfiguration(None),
     }
 }
 
@@ -44,9 +51,9 @@ fn meta_configuration_and_reversal_use_fresh_signal_bytes() {
     let configure = Query::Configure(meta_signal_spirit::ConfigureRequest {
         spirit_nexus_configuration: daemon_configuration(),
         archive_database_target: meta_signal_spirit::ArchiveDatabaseTarget::Default,
-        selected_mirror_target: None,
-        selected_criome_gate_target: None,
-        selected_guardian_prompt_target: None,
+        selected_mirror_target: meta_signal_spirit::SelectedMirrorTarget(None),
+        selected_criome_gate_target: meta_signal_spirit::SelectedCriomeGateTarget(None),
+        selected_guardian_prompt_target: meta_signal_spirit::SelectedGuardianPromptTarget(None),
     });
     let received = Signal::<Query>::from(
         configure
@@ -84,7 +91,7 @@ fn meta_reversal_round_trips_as_datom_text() {
         pending
             .actualize(&mut Budget {
                 remaining: 1024,
-                reader: ReaderBudget { remaining: 1024 },
+                reader: ReaderBudget::try_from(1024).expect("bounded reader budget"),
                 depth: 0,
                 maximum_depth: 1024,
             })
